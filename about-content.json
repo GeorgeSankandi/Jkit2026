@@ -1,0 +1,140 @@
+{
+  "tagline": "The complete connection to skilled and unskilled workers, talented individuals and opportunities in all sectors across Namibia — all for you.",
+  "ourStory": {
+    "title": "Our Story",
+    "paragraphs": [
+      "J-KIT was established out of a strong commitment to address Namibia’s pressing socio-economic challenges, including the high unemployment and poverty rates, the largely unregulated informal employment sector, and the limited opportunities available for Namibians to showcase and monetize their talents.",
+      "Founded by Kleopas H.T Malima, the platform was designed to connect workers and talents directly with employers and clients. We envisioned a platform that goes beyond simply listing jobs — one that actively empowers individuals, from domestic workers and skilled trades people to entertainers, to showcase their abilities, get hired, and secure work quickly."
+    ],
+    "images": [
+      "https://images.pexels.com/photos/5668858/pexels-photo-5668858.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2",
+      "https://images.pexels.com/photos/3184430/pexels-photo-3184430.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2",
+      "https://images.pexels.com/photos/1595385/pexels-photo-1595385.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2",
+      "https://images.pexels.com/photos/6457544/pexels-photo-6457544.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2"
+    ]
+  },
+  "vision": {
+    "title": "Our Vision",
+    "content": "To become Africa’s most trusted bridge between people and opportunity — empowering every individual, regardless of background, to earn, grow, and thrive by connecting talents and workers with income earning opportunities and who need them most."
+  },
+  "mission": {
+    "title": "Our Mission",
+    "items": [
+      "To bridge the gap between job seekers, talented individuals, and the people or businesses who need their skills and services using technology.",
+      "We believe everyone deserves access to opportunities that can change their lives, whether in the formal sector, informal sector, or creative industries."
+    ]
+  },
+  "values": {
+    "title": "Our Values",
+    "cards": [
+      {
+        "icon": "fas fa-users",
+        "title": "Unity",
+        "description": "By bringing together job seekers, employers, agents, and communities, we create a shared space where opportunities are accessible to all."
+      },
+      {
+        "icon": "fas fa-universal-access",
+        "title": "Accessibility",
+        "description": "Everyone should have equal access to opportunities, regardless of location or background."
+      },
+      {
+        "icon": "fas fa-shield-halved",
+        "title": "Trust & Security",
+        "description": "All profiles and listings are verified for safety and reliability."
+      },
+      {
+        "icon": "fas fa-bolt",
+        "title": "Empowerment",
+        "description": "We equip people with tools, visibility, and connections to thrive."
+      },
+      {
+        "icon": "fas fa-rocket",
+        "title": "Innovation",
+        "description": "Combining business and technology innovations to maximize user satisfaction."
+      }
+    ]
+  },
+  "howItWorks": {
+    "title": "How It Works",
+    "items": [
+      {
+        "icon": "fas fa-user-plus",
+        "title": "Create a Profile",
+        "description": "Sign up as a worker looking for gigs or as an agent/employer looking to hire."
+      },
+      {
+        "icon": "fas fa-search",
+        "title": "Discover Opportunities",
+        "description": "Browse through hundreds of job listings or search for specific skills you need."
+      },
+      {
+        "icon": "fas fa-handshake",
+        "title": "Connect & Hire",
+        "description": "Apply for jobs directly or contact talented individuals for your next project."
+      }
+    ]
+  },
+  "problemSolution": {
+    "problem": {
+      "title": "Problem Statement",
+      "items": [
+        "High Unemployment: Namibia faces critical unemployment rates, especially among the youth, limiting economic progress.",
+        "Disorganized Informal Sector: A lack of structure makes it difficult and unsafe to find reliable work or workers.",
+        "Limited Visibility for Talent: Skilled individuals and creatives often struggle to connect with a broader audience and find paid gigs.",
+        "Safety and Trust Concerns: Without a verification system, both employers and job seekers face risks."
+      ]
+    },
+    "solution": {
+      "title": "Our Solution",
+      "items": [
+        "Centralized & Verified Platform: We provide a single, secure online space for finding formal or informal jobs and opportunities for creative talent in Namibia.",
+        "Empowerment through Agents: We enable individuals and entities to act as agents, creating a vital connection point between workers, talents and their clients.",
+        "Increased Visibility & Opportunity: We give every individual (skilled or unskilled) a platform to showcase who they are, what they can do and connect with clients nationwide."
+      ]
+    }
+  },
+  "whoWeServe": {
+    "title": "Who We Serve",
+    "audiences": [
+      {
+        "icon": "fas fa-user-tie",
+        "title": "Job Seekers",
+        "items": [
+          "Skilled and unskilled individuals",
+          "People seeking extra income",
+          "Freelancers"
+        ]
+      },
+      {
+        "icon": "fas fa-palette",
+        "title": "Talents",
+        "items": [
+          "Entertainers",
+          "Athletes/Sports Professionals",
+          "Creative talents (e.g., artists)"
+        ]
+      },
+      {
+        "icon": "fas fa-building",
+        "title": "Employers / Clients",
+        "items": [
+          "Formal and informal employers",
+          "Individuals and businesses"
+        ]
+      },
+      {
+        "icon": "fas fa-handshake",
+        "title": "Agents",
+        "items": [
+          "Business agents",
+          "Individual agents"
+        ]
+      }
+    ]
+  },
+  "cta": {
+    "title": "Join Us in Changing Lives",
+    "paragraph": "Whether you’re hiring, looking for any type of job or you are showcasing your talent — J-KIT is all for you.",
+    "buttonText": "Explore Opportunities"
+  }
+}
