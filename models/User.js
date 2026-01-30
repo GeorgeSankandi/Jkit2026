@@ -56,10 +56,16 @@ UserSchema.pre('save', async function(next) {
 
             // Get or create counter for this JIN type
             const counterName = `jin_${jinPrefix}`;
-            const sequenceNumber = await Counter.getNextSequenceValue(counterName);
+            let counter = await Counter.findByIdAndUpdate(
+                counterName,
+                { $inc: { seq: 1 } },
+                { new: true, upsert: true }
+            );
 
             // Format JIN with zero-padded 6-digit number
-            this.jkitId = `${jinPrefix}-${sequenceNumber.toString().padStart(6, '0')}`;        } catch (error) {
+            const sequenceNumber = counter.seq.toString().padStart(6, '0');
+            this.jkitId = `${jinPrefix}-${sequenceNumber}`;
+        } catch (error) {
             console.error("Error generating J-KIT Identification Number (JIN):", error);
             throw error;
         }
