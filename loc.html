@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Geolocation Tracker</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css" />
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 1000px;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2em;
+            margin-bottom: 10px;
+        }
+
+        .info-panel {
+            padding: 20px 30px;
+            background: #f8f9fa;
+            border-bottom: 2px solid #e9ecef;
+        }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-top: 15px;
+        }
+
+        .info-item {
+            background: white;
+            padding: 15px;
+            border-radius: 10px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .info-item label {
+            display: block;
+            font-size: 0.85em;
+            color: #666;
+            margin-bottom: 5px;
+            font-weight: 600;
+        }
+
+        .info-item .value {
+            font-size: 1.1em;
+            color: #333;
+            font-weight: 500;
+        }
+
+        #map {
+            width: 100%;
+            height: 500px;
+        }
+
+        .status {
+            padding: 15px 30px;
+            text-align: center;
+            font-weight: 500;
+        }
+
+        .status.loading {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .status.success {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .status.error {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 12px 30px;
+            margin: 10px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 1em;
+            font-weight: 600;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        .btn:active {
+            transform: translateY(0);
+        }
+
+        @media (max-width: 768px) {
+            #map {
+                height: 400px;
+            }
+            
+            .header h1 {
+                font-size: 1.5em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>📍 Geolocation Tracker</h1>
+            <p>Automatic device location detection</p>
+        </div>
+
+        <div class="status loading" id="status">
+            🔍 Detecting your location...
+        </div>
+
+        <div class="info-panel" id="infoPanel" style="display: none;">
+            <h3 style="margin-bottom: 10px; color: #333;">Location Details</h3>
+            <div class="info-grid">
+                <div class="info-item">
+                    <label>Latitude</label>
+                    <div class="value" id="latitude">--</div>
+                </div>
+                <div class="info-item">
+                    <label>Longitude</label>
+                    <div class="value" id="longitude">--</div>
+                </div>
+                <div class="info-item">
+                    <label>Accuracy</label>
+                    <div class="value" id="accuracy">--</div>
+                </div>
+                <div class="info-item">
+                    <label>Altitude</label>
+                    <div class="value" id="altitude">--</div>
+                </div>
+            </div>
+            <div style="text-align: center; margin-top: 15px;">
+                <button class="btn" onclick="refreshLocation()">🔄 Refresh Location</button>
+            </div>
+        </div>
+
+        <div id="map"></div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+    <script>
+        let map;
+        let marker;
+        let accuracyCircle;
+
+        function initMap(lat, lng) {
+            if (!map) {
+                map = L.map('map').setView([lat, lng], 13);
+                
+                L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                    attribution: '© OpenStreetMap contributors',
+                    maxZoom: 19
+                }).addTo(map);
+            } else {
+                map.setView([lat, lng], 13);
+            }
+        }
+
+        function updateMarker(lat, lng, accuracy) {
+            if (marker) {
+                map.removeLayer(marker);
+            }
+            if (accuracyCircle) {
+                map.removeLayer(accuracyCircle);
+            }
+
+            const customIcon = L.divIcon({
+                className: 'custom-marker',
+                html: '<div style="background: #667eea; width: 20px; height: 20px; border-radius: 50%; border: 3px solid white; box-shadow: 0 2px 5px rgba(0,0,0,0.3);"></div>',
+                iconSize: [20, 20],
+                iconAnchor: [10, 10]
+            });
+
+            marker = L.marker([lat, lng], { icon: customIcon }).addTo(map);
+            marker.bindPopup(`<b>You are here!</b><br>Lat: ${lat.toFixed(6)}<br>Lng: ${lng.toFixed(6)}`).openPopup();
+
+            accuracyCircle = L.circle([lat, lng], {
+                radius: accuracy,
+                color: '#667eea',
+                fillColor: '#667eea',
+                fillOpacity: 0.2,
+                weight: 2
+            }).addTo(map);
+        }
+
+        function updateInfo(position) {
+            const lat = position.coords.latitude;
+            const lng = position.coords.longitude;
+            const accuracy = position.coords.accuracy;
+            const altitude = position.coords.altitude;
+
+            document.getElementById('latitude').textContent = lat.toFixed(6) + '°';
+            document.getElementById('longitude').textContent = lng.toFixed(6) + '°';
+            document.getElementById('accuracy').textContent = '±' + accuracy.toFixed(0) + ' meters';
+            document.getElementById('altitude').textContent = altitude ? altitude.toFixed(0) + ' meters' : 'Not available';
+
+            document.getElementById('infoPanel').style.display = 'block';
+        }
+
+        function showStatus(message, type) {
+            const statusEl = document.getElementById('status');
+            statusEl.textContent = message;
+            statusEl.className = 'status ' + type;
+        }
+
+        function getLocation() {
+            if ('geolocation' in navigator) {
+                showStatus('🔍 Detecting your location...', 'loading');
+                
+                navigator.geolocation.getCurrentPosition(
+                    function(position) {
+                        const lat = position.coords.latitude;
+                        const lng = position.coords.longitude;
+                        const accuracy = position.coords.accuracy;
+
+                        showStatus('✅ Location detected successfully!', 'success');
+                        updateInfo(position);
+                        initMap(lat, lng);
+                        updateMarker(lat, lng, accuracy);
+                    },
+                    function(error) {
+                        let errorMessage = '';
+                        switch(error.code) {
+                            case error.PERMISSION_DENIED:
+                                errorMessage = '❌ Location access denied. Please allow location access.';
+                                break;
+                            case error.POSITION_UNAVAILABLE:
+                                errorMessage = '❌ Location information unavailable.';
+                                break;
+                            case error.TIMEOUT:
+                                errorMessage = '❌ Location request timed out.';
+                                break;
+                            default:
+                                errorMessage = '❌ An unknown error occurred.';
+                        }
+                        showStatus(errorMessage, 'error');
+                    },
+                    {
+                        enableHighAccuracy: true,
+                        timeout: 10000,
+                        maximumAge: 0
+                    }
+                );
+            } else {
+                showStatus('❌ Geolocation is not supported by your browser.', 'error');
+            }
+        }
+
+        function refreshLocation() {
+            getLocation();
+        }
+
+        // Automatically get location on page load
+        window.onload = function() {
+            getLocation();
+        };
+    </script>
+</body>
+</html>

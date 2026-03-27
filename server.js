@@ -24,11 +24,13 @@ const Message = require('./models/Message');
 const AgencyRequest = require('./models/AgencyRequest');
 const { EventLog } = require('./models/EventLog');
 const Notification = require('./models/Notification');
+const ImportantEvent = require('./models/ImportantEvent');
+const OriginalEvent = require('./models/OriginalEvent'); // <-- NEW MODEL IMPORTED
 const Follower = require('./models/Follower');
 const NewsArticle = require('./models/NewsArticle'); 
 const TimelineEvent = require('./models/TimelineEvent');
-const Counter = require('./models/Counter');
-const Rating = require('./models/Rating'); // <-- NEW
+const Counter = require('./models/Counter'); // <-- NEW
+const Product = require('./models/Product'); // <-- NEW
 
 const app = express();
 const server = http.createServer(app);
@@ -138,6 +140,19 @@ const upload = multer({
     }
 }).single('image');
 
+const uploadMultiple = multer({
+    storage: storage,
+    limits: { fileSize: 5 * 1024 * 1024 }, // LIMIT: 5MB per file
+    fileFilter: (req, file, cb) => {
+        // STRICT FILTER: Only JPG and PNG allowed
+        const allowedTypes = ['image/jpeg', 'image/png', 'image/jpg'];
+        if (allowedTypes.includes(file.mimetype)) {
+            return cb(null, true);
+        }
+        cb(new Error('Error: Only JPG and PNG image files are allowed!'));
+    }
+}).array('images', 5); // Allow up to 5 images
+
 const cvStorage = multer.diskStorage({
     destination: './public/uploads/cvs/',
     filename: (req, file, cb) => { cb(null, `${Date.now()}-${file.originalname.replace(/ /g, '_')}`); }
@@ -197,10 +212,34 @@ app.post('/api/upload', (req, res) => {
         if (req.file == undefined) {
             return res.status(400).json({ message: 'No file selected!' });
         }
-        const filePath = req.file.path.replace('public', '');
+        const filePath = req.file.path.replace('public', '').replace(/\\/g, '/');
         res.json({
             message: 'File uploaded successfully',
             filePath: filePath
+        });
+    });
+});
+
+app.post('/api/upload-multiple', (req, res) => {
+    uploadMultiple(req, res, (err) => {
+        if (err) {
+            console.error('Multer multiple upload error:', err);
+            // Return specific error message if it's our custom file type error or size limit
+            if (err.message === 'Error: Only JPG and PNG image files are allowed!' || err.code === 'LIMIT_FILE_SIZE') {
+                return res.status(400).json({ message: err.message === 'File too large' ? 'File size exceeds 5MB limit.' : err.message });
+            }
+            if (err.code === 'LIMIT_FILE_COUNT') {
+                return res.status(400).json({ message: 'Maximum 5 images allowed.' });
+            }
+            return res.status(500).json({ message: err.message });
+        }
+        if (!req.files || req.files.length === 0) {
+            return res.status(400).json({ message: 'No files selected!' });
+        }
+        const filePaths = req.files.map(file => file.path.replace('public', '').replace(/\\/g, '/'));
+        res.json({
+            message: 'Files uploaded successfully',
+            filePaths: filePaths
         });
     });
 });
@@ -238,10 +277,12 @@ app.get('/', async (req, res) => {
             User.find().select('-password').lean(),
             Like.find().lean(),
             AgencyRequest.find().lean(),
+            ImportantEvent.find({ date: { $gte: today } }).sort({ date: 1 }).limit(10).lean(),
+            OriginalEvent.find().sort({ date: -1 }).lean(), // <-- FETCH ORIGINAL EVENTS
             Follower.find().lean(),
             NewsArticle.find().sort({ createdAt: -1 }).limit(10).lean(),
             TimelineEvent.find().sort({ date: -1 }).lean(),
-            Rating.find().lean() // <-- NEW
+            Product.find().lean() // <-- NEW
         ];
         let notificationsPromise = Promise.resolve([]);
         let conversationsPromise = Promise.resolve([]);
@@ -276,7 +317,8 @@ app.get('/', async (req, res) => {
 
         const [
             jobs, profiles, agencies, jobCategories, users, likes, 
-            agencyRequests, followers, newsArticles, timelineEvents, ratings, // <-- NEW
+            agencyRequests, importantEvents, originalEvents, followers, newsArticles, timelineEvents,
+            products, // <-- NEW
             notifications, conversations, eventLogs, allNewsArticlesForAdmin
         ] = await Promise.all(dataPromises);
 
@@ -297,9 +339,10 @@ app.get('/', async (req, res) => {
         res.render('index', {
             content: { 
                 jobs, profiles, peopleProfiles, agencies, jobCategories, users, likes, 
-                agencyRequests, followers, notifications, conversations, eventLogs,
+                agencyRequests, importantEvents, originalEvents, followers, notifications, conversations, eventLogs,
                 newsArticles: currentUser?.isAdmin ? allNewsArticlesForAdmin : newsArticles,
-                timelineEvents, ratings // <-- NEW
+                timelineEvents,
+                products // <-- NEW
             },
             currentUser: currentUser,
             settings: settings,
@@ -390,12 +433,7 @@ app.post('/api/signup', async (req, res) => {
         io.emit('content_created', { type: 'profiles', data: profile.toJSON() });
 
         // Prepare data for the frontend to send the verification email
-        // Use request domain in production, fallback to FRONTEND_URL if explicitly set
-        let baseUrl = `${req.protocol}://${req.get('host')}`;
-        if (process.env.FRONTEND_URL && process.env.FRONTEND_URL !== 'http://localhost:8080') {
-            baseUrl = process.env.FRONTEND_URL;
-        }
-        const verificationUrl = `${baseUrl}/#verify?token=${verificationToken}`;
+        const verificationUrl = `${process.env.FRONTEND_URL || req.protocol + '://' + req.get('host')}/#verify?token=${verificationToken}`;
 
         res.status(201).json({ 
             success: true, 
@@ -404,6 +442,7 @@ app.post('/api/signup', async (req, res) => {
                 action: 'newUserSignup', // Action for Google Apps Script router
                 email: user.email,
                 fullName: user.fullName,
+                type: user.type, // Include user type for email customization
                 verificationUrl: verificationUrl,
                 verificationCode: verificationToken // Use the same token as the code for simplicity
             }
@@ -529,12 +568,7 @@ app.post('/api/users/resend-verification', async (req, res) => {
         if (user && !user.isVerified) {
             const verificationToken = user.getVerificationToken();
             await user.save();
-            // Use request domain in production, fallback to FRONTEND_URL if explicitly set
-            let baseUrl = `${req.protocol}://${req.get('host')}`;
-            if (process.env.FRONTEND_URL && process.env.FRONTEND_URL !== 'http://localhost:8080') {
-                baseUrl = process.env.FRONTEND_URL;
-            }
-            const verificationUrl = `${baseUrl}/#verify?token=${verificationToken}`;
+            const verificationUrl = `${process.env.FRONTEND_URL || req.protocol + '://' + req.get('host')}/#verify?token=${verificationToken}`;
 
             return res.status(200).json({
                 success: true,
@@ -543,6 +577,7 @@ app.post('/api/users/resend-verification', async (req, res) => {
                     action: 'newUserSignup', // Action for Google Apps Script router
                     email: user.email,
                     fullName: user.fullName,
+                    type: user.type, // Include user type for email customization
                     verificationUrl: verificationUrl,
                     verificationCode: verificationToken // Use the same token for the code
                 }
@@ -702,90 +737,6 @@ app.post('/api/users/:username/unfollow', protect, async (req, res) => {
     }
 });
 
-// --- NEW RATING ENDPOINT ---
-app.post('/api/ratings', protect, async (req, res) => {
-    const { jobId, ratedUsername, rating, comment } = req.body;
-    const raterUsername = req.session.user.username;
-
-    try {
-        // 1. Validation
-        const job = await Job.findOne({ jobId: jobId });
-        if (!job) {
-            return res.status(404).json({ message: 'Job not found.' });
-        }
-        if (job.postedBy !== raterUsername) {
-            return res.status(403).json({ message: 'You are not authorized to rate for this job.' });
-        }
-        if (job.assignedTo !== ratedUsername) {
-            return res.status(400).json({ message: 'This user was not assigned to the specified job.' });
-        }
-        if (job.status !== 'closed') {
-            return res.status(400).json({ message: 'You can only rate workers for completed (closed) jobs.' });
-        }
-
-        // 2. Save the new rating
-        const newRating = new Rating({
-            jobId,
-            ratedUsername,
-            raterUsername,
-            rating,
-            comment
-        });
-        await newRating.save();
-
-        // 3. Recalculate average rating for the rated user
-        const stats = await Rating.aggregate([
-            { $match: { ratedUsername: ratedUsername } },
-            { $group: {
-                _id: '$ratedUsername',
-                averageRating: { $avg: '$rating' },
-                ratingCount: { $sum: 1 }
-            }}
-        ]);
-
-        if (stats.length > 0) {
-            const { averageRating, ratingCount } = stats[0];
-            const updatedProfile = await Profile.findOneAndUpdate(
-                { username: ratedUsername },
-                { 
-                    averageRating: averageRating.toFixed(1), // Store with one decimal place
-                    ratingCount: ratingCount 
-                },
-                { new: true }
-            ).lean();
-            
-            // Emit real-time update
-            if(updatedProfile) {
-                io.emit('content_updated', { type: 'profiles', data: updatedProfile });
-            }
-        }
-
-        // 4. Log event and send notification
-        logEvent({
-            eventType: 'USER_RATED',
-            actorUsername: raterUsername,
-            details: { message: `User '${raterUsername}' rated ${ratedUsername} ${rating} stars for job '${job.title}'.` },
-            target: { id: ratedUsername, model: 'User' }
-        });
-
-        await sendNotification(
-            ratedUsername,
-            `${raterUsername} gave you a ${rating}-star rating for the job: "${job.title}"!`,
-            '#dashboard-page'
-        );
-
-        res.status(201).json({ message: 'Rating submitted successfully!' });
-
-    } catch (error) {
-        if (error.code === 11000) {
-            return res.status(409).json({ message: 'You have already submitted a rating for this job.' });
-        }
-        console.error("Error submitting rating:", error);
-        res.status(500).json({ message: 'Server error while submitting rating.' });
-    }
-});
-
-
 app.put('/api/content/:type/:id', protect, async (req, res) => {
     const { type, id } = req.params;
     const data = req.body;
@@ -797,6 +748,7 @@ app.put('/api/content/:type/:id', protect, async (req, res) => {
         case 'jobs': Model = Job; query = { jobId: id }; break;
         case 'agencies': Model = Agency; query = { agencyId: id }; break;
         case 'agencyRequests': Model = AgencyRequest; query = { requestId: id }; break;
+        case 'products': Model = Product; query = { productId: id }; break; // <-- NEW
         default: return res.status(400).json({ message: 'Invalid content type' });
     }
     
@@ -866,6 +818,8 @@ app.put('/api/content/:type/:id', protect, async (req, res) => {
             logEvent({ eventType: 'PROFILE_UPDATED', actorUsername: req.session.user.username, details: { updatedFields: Object.keys(data) }, target: { id: id, model: 'Profile' } });
         } else if (type === 'agencies') {
              logEvent({ eventType: 'AGENCY_UPDATED', actorUsername: req.session.user.username, details: { updatedFields: Object.keys(data) }, target: { id: id, model: 'Agency' } });
+        } else if (type === 'products') { // <-- NEW
+             logEvent({ eventType: 'PRODUCT_UPDATED', actorUsername: req.session.user.username, details: { updatedFields: Object.keys(data) }, target: { id: id, model: 'Product' } });
         }
         res.status(200).json(updatedDoc);
     } catch(error) {
@@ -1012,6 +966,34 @@ app.post('/api/content/jobs', protect, async (req, res) => {
             user: req.session.user ? req.session.user.username : 'No session',
         });
         // The initial response might have already been sent, so we can't send another one here. Just log the error.
+    }
+});
+
+// --- NEW: Create Product Route ---
+app.post('/api/content/products', protect, async (req, res) => {
+    try {
+        const data = { 
+            ...req.body, 
+            productId: `prod_${Date.now()}`,
+            postedBy: req.session.user.username 
+        };
+        
+        const newProduct = new Product(data);
+        await newProduct.save();
+        
+        logEvent({
+            eventType: 'PRODUCT_CREATED',
+            actorUsername: req.session.user.username,
+            details: { name: data.name, price: data.price },
+            target: { id: newProduct.productId, model: 'Product' }
+        });
+
+        io.emit('content_created', { type: 'products', data: newProduct.toJSON() });
+        
+        res.status(201).json(newProduct);
+    } catch(error) {
+        console.error("Error creating product:", error);
+        res.status(500).json({ message: `Error creating product: ${error.message}` });
     }
 });
 
@@ -1205,6 +1187,7 @@ app.delete('/api/content/:type/:id', protect, async(req, res) => {
     let query;
     switch(type) {
         case 'jobs': Model = Job; query = { jobId: id }; break;
+        case 'products': Model = Product; query = { productId: id }; break; // <-- NEW
         default: return res.status(400).json({ message: 'Invalid content type' });
     }
     try {
@@ -1216,6 +1199,17 @@ app.delete('/api/content/:type/:id', protect, async(req, res) => {
                     actorUsername: req.session.user.username,
                     details: { title: job.title },
                     target: { id: id, model: 'Job' }
+                });
+            }
+        }
+        if (type === 'products') { // <-- NEW
+            const product = await Model.findOne(query).lean();
+            if (product) {
+                logEvent({
+                    eventType: 'PRODUCT_DELETED',
+                    actorUsername: req.session.user.username,
+                    details: { name: product.name },
+                    target: { id: id, model: 'Product' }
                 });
             }
         }
@@ -1314,6 +1308,11 @@ app.put('/api/likes', protect, async (req, res) => {
                 const article = await NewsArticle.findOne({ articleId: newItemId }).lean();
                 if (article) {
                     await logEvent({ eventType: eventType.replace('JOB', 'NEWS_ARTICLE'), actorUsername: username, details: { message: `User '${username}' ${messagePrefix} news article '${article.title}'.` }, target: { id: newItemId, model: 'NewsArticle' } });
+                }
+            } else if (newItemId.startsWith('event_')) {
+                const event = await ImportantEvent.findOne({ eventId: newItemId }).lean();
+                if (event) {
+                    await logEvent({ eventType: eventType.replace('JOB', 'EVENT'), actorUsername: username, details: { message: `User '${username}' ${messagePrefix} event '${event.title}'.` }, target: { id: newItemId, model: 'ImportantEvent' } });
                 }
             }
         };
@@ -1617,6 +1616,104 @@ app.put('/api/admin/about-content', protect, admin, async (req, res) => {
     }
 });
 
+app.post('/api/admin/events', protect, admin, async (req, res) => {
+    try {
+        const eventData = { ...req.body, postedBy: req.session.user.username };
+        const newEvent = new ImportantEvent(eventData);
+        await newEvent.save();
+        io.emit('content_created', { type: 'importantEvents', data: newEvent.toJSON() });
+        res.status(201).json(newEvent);
+    } catch (error) {
+        res.status(500).json({ message: `Error creating event: ${error.message}` });
+    }
+});
+
+app.put('/api/admin/events/:id', protect, admin, async (req, res) => {
+    try {
+        const updatedEvent = await ImportantEvent.findOneAndUpdate(
+            { eventId: req.params.id },
+            req.body,
+            { new: true }
+        ).lean();
+        if (!updatedEvent) return res.status(404).json({ message: 'Event not found' });
+        io.emit('content_updated', { type: 'importantEvents', data: updatedEvent });
+        res.status(200).json(updatedEvent);
+    } catch (error) {
+        res.status(500).json({ message: `Error updating event: ${error.message}` });
+    }
+});
+
+app.delete('/api/admin/events/:id', protect, admin, async (req, res) => {
+    try {
+        const result = await ImportantEvent.deleteOne({ eventId: req.params.id });
+        if (result.deletedCount === 0) return res.status(404).json({ message: 'Event not found' });
+        io.emit('content_deleted', { type: 'importantEvents', id: req.params.id });
+        res.status(200).json({ message: 'Event deleted successfully' });
+    } catch (error) {
+        res.status(500).json({ message: `Error deleting event: ${error.message}` });
+    }
+});
+
+app.post('/api/events', protect, async (req, res) => {
+    try {
+        const profile = await Profile.findOne({ username: req.session.user.username }).lean();
+        if (!profile || !profile.isVerified) {
+            return res.status(403).json({ message: 'Only verified users can post events.' });
+        }
+        const eventData = { ...req.body, postedBy: req.session.user.username };
+        const newEvent = new ImportantEvent(eventData);
+        await newEvent.save();
+        logEvent({
+            eventType: 'EVENT_CREATED_BY_USER',
+            actorUsername: req.session.user.username,
+            details: { title: newEvent.title },
+            target: { id: newEvent.eventId, model: 'ImportantEvent' }
+        });
+        io.emit('content_created', { type: 'importantEvents', data: newEvent.toJSON() });
+        res.status(201).json(newEvent);
+    } catch (error) {
+        res.status(500).json({ message: `Error creating event: ${error.message}` });
+    }
+});
+
+app.put('/api/events/:id', protect, async (req, res) => {
+    try {
+        const event = await ImportantEvent.findOne({ eventId: req.params.id });
+        if (!event) {
+            return res.status(404).json({ message: 'Event not found.' });
+        }
+        if (event.postedBy !== req.session.user.username) {
+            return res.status(403).json({ message: 'You are not authorized to edit this event.' });
+        }
+        const updatedEvent = await ImportantEvent.findOneAndUpdate(
+            { eventId: req.params.id },
+            req.body,
+            { new: true }
+        ).lean();
+        io.emit('content_updated', { type: 'importantEvents', data: updatedEvent });
+        res.status(200).json(updatedEvent);
+    } catch (error) {
+        res.status(500).json({ message: `Error updating event: ${error.message}` });
+    }
+});
+
+app.delete('/api/events/:id', protect, async (req, res) => {
+    try {
+        const event = await ImportantEvent.findOne({ eventId: req.params.id });
+        if (!event) {
+            return res.status(404).json({ message: 'Event not found.' });
+        }
+        if (event.postedBy !== req.session.user.username) {
+            return res.status(403).json({ message: 'You are not authorized to delete this event.' });
+        }
+        await ImportantEvent.deleteOne({ eventId: req.params.id });
+        io.emit('content_deleted', { type: 'importantEvents', id: req.params.id });
+        res.status(200).json({ message: 'Event deleted successfully.' });
+    } catch (error) {
+        res.status(500).json({ message: `Error deleting event: ${error.message}` });
+    }
+});
+
 app.post('/api/admin/news', protect, admin, async (req, res) => {
     try {
         const newArticle = new NewsArticle(req.body);
@@ -1839,6 +1936,46 @@ app.delete('/api/admin/timeline-events/:id', protect, admin, async (req, res) =>
     }
 });
 
+// <-- NEW ADMIN ROUTES FOR ORIGINAL EVENTS -->
+app.post('/api/admin/original-events', protect, admin, async (req, res) => {
+    try {
+        const eventData = { ...req.body, postedBy: req.session.user.username };
+        const newEvent = new OriginalEvent(eventData);
+        await newEvent.save();
+        io.emit('content_created', { type: 'originalEvents', data: newEvent.toJSON() });
+        res.status(201).json(newEvent);
+    } catch (error) {
+        res.status(500).json({ message: `Error creating original event: ${error.message}` });
+    }
+});
+
+app.put('/api/admin/original-events/:id', protect, admin, async (req, res) => {
+    try {
+        const updatedEvent = await OriginalEvent.findOneAndUpdate(
+            { originalEventId: req.params.id },
+            req.body,
+            { new: true }
+        ).lean();
+        if (!updatedEvent) return res.status(404).json({ message: 'Original event not found' });
+        io.emit('content_updated', { type: 'originalEvents', data: updatedEvent });
+        res.status(200).json(updatedEvent);
+    } catch (error) {
+        res.status(500).json({ message: `Error updating original event: ${error.message}` });
+    }
+});
+
+app.delete('/api/admin/original-events/:id', protect, admin, async (req, res) => {
+    try {
+        const result = await OriginalEvent.deleteOne({ originalEventId: req.params.id });
+        if (result.deletedCount === 0) return res.status(404).json({ message: 'Original event not found' });
+        io.emit('content_deleted', { type: 'originalEvents', id: req.params.id });
+        res.status(200).json({ message: 'Original event deleted successfully' });
+    } catch (error) {
+        res.status(500).json({ message: `Error deleting original event: ${error.message}` });
+    }
+});
+// <-- END OF NEW ADMIN ROUTES -->
+
 app.get('/api/seed', async (req, res) => {
     try {
         const seedData = require('./utils/seedData');
@@ -1852,11 +1989,13 @@ app.get('/api/seed', async (req, res) => {
         await AgencyRequest.deleteMany();
         await EventLog.deleteMany();
         await Notification.deleteMany();
+        await ImportantEvent.deleteMany();
+        await OriginalEvent.deleteMany(); // <-- ADDED FOR SEEDING
         await Follower.deleteMany();
         await NewsArticle.deleteMany();
         await TimelineEvent.deleteMany();
-        await Counter.deleteMany();
-        await Rating.deleteMany(); // <-- NEW
+        await Counter.deleteMany(); // <-- NEW
+        await Product.deleteMany(); // <-- NEW
 
         await User.insertMany(Object.values(seedData.users));
         await Profile.insertMany(Object.values(seedData.profiles));
@@ -1864,7 +2003,7 @@ app.get('/api/seed', async (req, res) => {
         await Agency.insertMany(Object.values(seedData.agencies));
         await JobCategory.insertMany(seedData.jobCategoryData);
         
-        await Counter.create({ _id: 'jkitId', seq: Object.values(seedData.users).length });
+        await Counter.create({ _id: 'jkitId', seq: Object.values(seedData.users).length }); // <-- NEW
 
         console.log('Database seeded!');
         res.send('Database Seeded!');

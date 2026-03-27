@@ -9,10 +9,9 @@ module.exports = {
     },
     {
       name: "mongodb",
+      // --- THIS IS THE CORRECTED PATH ---
       script: "/home/dh_6fq5p3/mongodb/bin/mongod",
-      // --- THIS IS THE CORRECTED PART ---
-      // Instead of using --dbpath, we now use --config to point to our new file.
-      args: "--config /home/dh_6fq5p3/jkit-app/mongod.conf",
+      args: "--dbpath /home/dh_6fq5p3/data/db",
       interpreter: "none",
       exec_mode: "fork"
     }

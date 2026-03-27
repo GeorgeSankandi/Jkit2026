@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>E-commerce Contract State Machine</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'primary-blue': '#1c50b6',
+                        'secondary-gray': '#e5e7eb',
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
+        body { font-family: 'Inter', sans-serif; background-color: #f4f7f9; }
+        .contract-card {
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 5px 10px -5px rgba(0, 0, 0, 0.04);
+        }
+    </style>
+</head>
+<body class="p-6 md:p-10">
+
+    <div id="app" class="max-w-4xl mx-auto">
+        <h1 class="text-3xl font-bold mb-6 text-primary-blue">E-commerce Smart Contract (Centralized)</h1>
+        <p class="text-gray-600 mb-6">
+            This application simulates a purchase agreement using Firestore as a secure state machine. The "smart contract" is enforced by the application's JavaScript logic, which dictates mandatory state transitions (rules).
+        </p>
+
+        <!-- User/Auth Status -->
+        <div id="authStatus" class="bg-white p-4 rounded-xl shadow mb-6 border-l-4 border-primary-blue">
+            <p class="font-semibold text-lg mb-2">User Status:</p>
+            <p id="userIdDisplay" class="text-sm font-mono break-all text-gray-700">Loading...</p>
+        </div>
+
+        <!-- Contract Card -->
+        <div id="contractCard" class="contract-card bg-white p-6 rounded-xl hidden">
+            <h2 class="text-2xl font-semibold mb-4 text-gray-800 border-b pb-2">Purchase Contract Agreement (P-001)</h2>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                <div>
+                    <p class="font-medium text-sm text-gray-500">Contract ID:</p>
+                    <p id="contractId" class="font-mono text-sm break-all">...</p>
+                </div>
+                <div>
+                    <p class="font-medium text-sm text-gray-500">Escrow Amount:</p>
+                    <p id="escrowAmount" class="text-xl font-bold text-green-600">$0.00</p>
+                </div>
+            </div>
+
+            <!-- Real-Time State Indicator -->
+            <div class="mb-6">
+                <p class="font-medium text-sm text-gray-500">Current Status:</p>
+                <div class="flex items-center space-x-2">
+                    <span id="contractStatus" class="text-2xl font-extrabold px-3 py-1 rounded-full text-white">LOADING...</span>
+                </div>
+            </div>
+
+            <!-- Action Buttons (The "Smart Contract" Functions) -->
+            <div id="actions" class="border-t pt-4 space-y-3 md:space-y-0 md:space-x-3 flex flex-col md:flex-row">
+                <!-- BUYER Action -->
+                <button id="fulfillButton" onclick="fulfillOrder()"
+                    class="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded-lg transition duration-150 disabled:opacity-50 flex-1" disabled>
+                    (Buyer) Confirm Delivery & Release Funds
+                </button>
+
+                <!-- SELLER Action -->
+                <button id="cancelButton" onclick="cancelOrder()"
+                    class="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded-lg transition duration-150 disabled:opacity-50 flex-1" disabled>
+                    (Seller) Dispute/Cancel Order
+                </button>
+
+                <!-- ADMIN/INIT Action -->
+                <button id="createButton" onclick="createContract()"
+                    class="bg-primary-blue hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg transition duration-150 flex-1">
+                    Create New Purchase Contract
+                </button>
+            </div>
+            
+            <p id="messageBox" class="mt-4 text-center p-3 bg-yellow-100 text-yellow-800 rounded-lg hidden"></p>
+            <p id="errorBox" class="mt-4 text-center p-3 bg-red-100 text-red-800 rounded-lg hidden"></p>
+        </div>
+    </div>
+
+    <!-- Firebase Imports -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, doc, setDoc, onSnapshot, collection, query, updateDoc, getDoc, runTransaction, setLogLevel } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+        // Global variables provided by the Canvas environment
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
+        const firebaseConfig = JSON.parse(typeof __firebase_config !== 'undefined' ? __firebase_config : '{}');
+        const initialAuthToken = typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : null;
+        
+        // Firestore and Auth instances
+        let app;
+        let db;
+        let auth;
+        let userId = null;
+        
+        // Contract details
+        const CONTRACT_ID = 'P_001_ESCROW_AGREEMENT';
+        const SELLER_ID = 'seller_123456789'; // Mock Seller ID
+        const ITEM_PRICE = 50.99;
+        const CONTRACT_COLLECTION_PATH = `/artifacts/${appId}/public/data/ecommerce_contracts`;
+
+        // Utility Functions
+        window.showMessage = (msg, isError = false) => {
+            const box = isError ? document.getElementById('errorBox') : document.getElementById('messageBox');
+            const otherBox = isError ? document.getElementById('messageBox') : document.getElementById('errorBox');
+            
+            box.textContent = msg;
+            box.classList.remove('hidden');
+            otherBox.classList.add('hidden');
+        };
+
+        window.updateContractUI = (contract) => {
+            document.getElementById('contractCard').classList.remove('hidden');
+            document.getElementById('contractId').textContent = contract.id || 'N/A';
+            document.getElementById('escrowAmount').textContent = `$${contract.amount.toFixed(2) || '0.00'}`;
+
+            const statusElement = document.getElementById('contractStatus');
+            const fulfillButton = document.getElementById('fulfillButton');
+            const cancelButton = document.getElementById('cancelButton');
+            
+            // Reset state
+            statusElement.className = 'text-2xl font-extrabold px-3 py-1 rounded-full text-white';
+            fulfillButton.disabled = true;
+            cancelButton.disabled = true;
+            document.getElementById('createButton').classList.add('hidden');
+
+
+            switch (contract.status) {
+                case 'PENDING':
+                    statusElement.textContent = 'PENDING (Awaiting Delivery)';
+                    statusElement.classList.add('bg-orange-500');
+                    if (userId === contract.buyerId) {
+                        fulfillButton.disabled = false;
+                        fulfillButton.textContent = '(Buyer) Confirm Delivery & Release Funds';
+                    }
+                    cancelButton.disabled = false;
+                    break;
+                case 'FULFILLED':
+                    statusElement.textContent = 'FULFILLED (Funds Released)';
+                    statusElement.classList.add('bg-green-600');
+                    break;
+                case 'CANCELED':
+                    statusElement.textContent = 'CANCELED (Refund Issued)';
+                    statusElement.classList.add('bg-red-600');
+                    break;
+                default:
+                    statusElement.textContent = 'UNKNOWN';
+                    statusElement.classList.add('bg-gray-400');
+                    break;
+            }
+        };
+
+
+        // --- CORE SMART CONTRACT FUNCTIONS (Enforced State Transitions) ---
+
+        // 1. Contract Creation (Simulated Deployment)
+        window.createContract = async () => {
+            if (!userId) {
+                window.showMessage('Authentication not ready.', true);
+                return;
+            }
+
+            const contractDocRef = doc(db, CONTRACT_COLLECTION_PATH, CONTRACT_ID);
+            const newContract = {
+                id: CONTRACT_ID,
+                buyerId: userId,
+                sellerId: SELLER_ID,
+                amount: ITEM_PRICE,
+                status: 'PENDING', // Initial State
+                timestamp: Date.now(),
+                history: [{ timestamp: Date.now(), action: 'Created', by: userId }]
+            };
+
+            try {
+                await setDoc(contractDocRef, newContract);
+                window.showMessage('Contract successfully created (deployed). Status is now PENDING.', false);
+            } catch (e) {
+                console.error("Error creating contract:", e);
+                window.showMessage(`Error creating contract: ${e.message}`, true);
+            }
+        };
+        
+        // 2. Fulfill Order (Smart Contract Transition: PENDING -> FULFILLED)
+        // This function can only be executed by the Buyer when the status is PENDING.
+        window.fulfillOrder = async () => {
+            if (!userId) { window.showMessage('Authentication required.', true); return; }
+
+            const contractDocRef = doc(db, CONTRACT_COLLECTION_PATH, CONTRACT_ID);
+
+            try {
+                // Use a transaction to ensure atomic read/write and enforce the rules
+                await runTransaction(db, async (transaction) => {
+                    const contractDoc = await transaction.get(contractDocRef);
+
+                    if (!contractDoc.exists()) {
+                        throw new Error("Contract does not exist.");
+                    }
+                    const contract = contractDoc.data();
+
+                    // --- THE SMART CONTRACT LOGIC / RULE ENFORCEMENT ---
+                    if (contract.status !== 'PENDING') {
+                        throw new Error(`Execution failed: Order is not PENDING. Current status: ${contract.status}.`);
+                    }
+                    if (contract.buyerId !== userId) {
+                        throw new Error("Execution failed: Only the original Buyer can fulfill this contract.");
+                    }
+                    // --- END RULES ---
+
+                    // State Transition
+                    transaction.update(contractDocRef, {
+                        status: 'FULFILLED',
+                        history: [...contract.history, { timestamp: Date.now(), action: 'Fulfilled/Funds Released', by: userId }],
+                        // Simulation of fund transfer: Escrow -> Seller Wallet
+                        sellerBalance: (contract.sellerBalance || 0) + contract.amount,
+                    });
+                    
+                    window.showMessage(`Success! Funds for $${contract.amount.toFixed(2)} have been released to the Seller. Contract is now FULFILLED.`);
+                });
+            } catch (e) {
+                console.error("Fulfill order transaction failed:", e);
+                window.showMessage(`Transaction Error: ${e.message}`, true);
+            }
+        };
+
+        // 3. Cancel Order (Smart Contract Transition: PENDING -> CANCELED)
+        // This function can be executed by the Seller while the status is PENDING.
+        window.cancelOrder = async () => {
+            if (!userId) { window.showMessage('Authentication required.', true); return; }
+
+            const contractDocRef = doc(db, CONTRACT_COLLECTION_PATH, CONTRACT_ID);
+
+            try {
+                await runTransaction(db, async (transaction) => {
+                    const contractDoc = await transaction.get(contractDocRef);
+
+                    if (!contractDoc.exists()) {
+                        throw new Error("Contract does not exist.");
+                    }
+                    const contract = contractDoc.data();
+
+                    // --- THE SMART CONTRACT LOGIC / RULE ENFORCEMENT ---
+                    if (contract.status !== 'PENDING') {
+                        throw new Error(`Execution failed: Order is not PENDING. Current status: ${contract.status}.`);
+                    }
+                    if (contract.sellerId !== userId) {
+                        // NOTE: For simplicity, only Seller can cancel. In a real app, buyer could initiate refund.
+                        throw new Error("Execution failed: Only the Seller can cancel this order.");
+                    }
+                    // --- END RULES ---
+
+                    // State Transition
+                    transaction.update(contractDocRef, {
+                        status: 'CANCELED',
+                        history: [...contract.history, { timestamp: Date.now(), action: 'Canceled/Refund Issued', by: userId }],
+                        // Simulation of fund transfer: Escrow -> Buyer Wallet
+                        buyerRefund: (contract.buyerRefund || 0) + contract.amount,
+                    });
+
+                    window.showMessage(`Success! Order canceled. Funds for $${contract.amount.toFixed(2)} have been refunded to the Buyer. Contract is now CANCELED.`);
+                });
+            } catch (e) {
+                console.error("Cancel order transaction failed:", e);
+                window.showMessage(`Transaction Error: ${e.message}`, true);
+            }
+        };
+
+
+        // --- FIREBASE AND AUTHENTICATION SETUP ---
+
+        const initFirebase = async () => {
+            // setLogLevel('debug'); // Uncomment for Firebase debugging
+            try {
+                app = initializeApp(firebaseConfig);
+                db = getFirestore(app);
+                auth = getAuth(app);
+                
+                // 1. Sign in using the provided token or anonymously
+                if (initialAuthToken) {
+                    await signInWithCustomToken(auth, initialAuthToken);
+                } else {
+                    await signInAnonymously(auth);
+                }
+
+                // 2. Listen for auth state changes
+                onAuthStateChanged(auth, (user) => {
+                    if (user) {
+                        userId = user.uid;
+                        document.getElementById('userIdDisplay').textContent = 'Authenticated User ID (Buyer): ' + userId;
+                        // Start listening to the contract state
+                        listenForContract();
+                    } else {
+                        document.getElementById('userIdDisplay').textContent = 'Not Authenticated.';
+                    }
+                });
+
+            } catch (error) {
+                console.error("Firebase initialization or auth error:", error);
+                document.getElementById('userIdDisplay').textContent = `Auth Error: ${error.message}`;
+            }
+        };
+        
+        // 4. Real-time Contract State Listener
+        const listenForContract = () => {
+            const contractDocRef = doc(db, CONTRACT_COLLECTION_PATH, CONTRACT_ID);
+            
+            onSnapshot(contractDocRef, (docSnapshot) => {
+                if (docSnapshot.exists()) {
+                    const contractData = docSnapshot.data();
+                    window.updateContractUI(contractData);
+                    document.getElementById('createButton').classList.add('hidden');
+                } else {
+                    // Contract not deployed/created yet
+                    window.showMessage('No active contract found. Click "Create New Purchase Contract" to start.', false);
+                    document.getElementById('contractCard').classList.remove('hidden');
+                    document.getElementById('createButton').classList.remove('hidden');
+                    document.getElementById('contractStatus').textContent = 'UNDEPLOYED';
+                    document.getElementById('contractStatus').classList.add('bg-gray-400');
+                }
+            }, (error) => {
+                window.showMessage(`Error listening to contract: ${error.message}`, true);
+                console.error("Firestore Listener Error:", error);
+            });
+        };
+
+        initFirebase();
+    </script>
+</body>
+</html>
