@@ -41,30 +41,60 @@ UserSchema.pre('save', async function(next) {
     // Generate J-KIT Identification Number (JIN) for new users
     if (this.isNew && !this.jkitId) {
         try {
-            // Determine JIN prefix based on user type
-            let jinPrefix = '';
-            if (this.type === 'Worker' || this.type === 'Talent') {
-                jinPrefix = 'I-JIN'; // Individual JIN
-            } else if (this.type === 'Employer') {
-                // Use B-JIN for formal business, IB-JIN for informal business
-                jinPrefix = this.businessType === 'informal' ? 'IB-JIN' : 'B-JIN';
-            } else if (this.type === 'Agent') {
+            // Handle JIN generation based on user type
+            if (this.type === 'Agent') {
                 jinPrefix = 'A-JIN'; // Agent JIN
+                
+                // For agents, find the next available number in arithmetic progression
+                const existingAgents = await mongoose.model('User').find({ 
+                    type: 'Agent', 
+                    jkitId: { $exists: true, $ne: null } 
+                }).select('jkitId').lean();
+                
+                // Extract sequence numbers from existing JINs
+                const usedNumbers = new Set();
+                existingAgents.forEach(agent => {
+                    if (agent.jkitId && agent.jkitId.startsWith('A-JIN-')) {
+                        const seqPart = agent.jkitId.split('-')[2];
+                        const seqNum = parseInt(seqPart, 10);
+                        if (!isNaN(seqNum)) {
+                            usedNumbers.add(seqNum);
+                        }
+                    }
+                });
+                
+                // Find the next available number in arithmetic progression
+                let nextNumber = 1;
+                while (usedNumbers.has(nextNumber)) {
+                    nextNumber++;
+                }
+                
+                // Format JIN with zero-padded 6-digit number
+                const sequenceNumber = nextNumber.toString().padStart(6, '0');
+                this.jkitId = `${jinPrefix}-${sequenceNumber}`;
             } else {
-                throw new Error(`Unknown user type: ${this.type}`);
+                // For non-agent types, use the counter-based system
+                if (this.type === 'Worker' || this.type === 'Talent') {
+                    jinPrefix = 'I-JIN'; // Individual JIN
+                } else if (this.type === 'Employer') {
+                    // Use B-JIN for formal business, IB-JIN for informal business
+                    jinPrefix = this.businessType === 'informal' ? 'IB-JIN' : 'B-JIN';
+                } else {
+                    throw new Error(`Unknown user type: ${this.type}`);
+                }
+
+                // Get or create counter for this JIN type
+                const counterName = `jin_${jinPrefix}`;
+                let counter = await Counter.findByIdAndUpdate(
+                    counterName,
+                    { $inc: { seq: 1 } },
+                    { new: true, upsert: true }
+                );
+
+                // Format JIN with zero-padded 6-digit number
+                const sequenceNumber = counter.seq.toString().padStart(6, '0');
+                this.jkitId = `${jinPrefix}-${sequenceNumber}`;
             }
-
-            // Get or create counter for this JIN type
-            const counterName = `jin_${jinPrefix}`;
-            let counter = await Counter.findByIdAndUpdate(
-                counterName,
-                { $inc: { seq: 1 } },
-                { new: true, upsert: true }
-            );
-
-            // Format JIN with zero-padded 6-digit number
-            const sequenceNumber = counter.seq.toString().padStart(6, '0');
-            this.jkitId = `${jinPrefix}-${sequenceNumber}`;
         } catch (error) {
             console.error("Error generating J-KIT Identification Number (JIN):", error);
             throw error;

@@ -5,7 +5,7 @@ const ProfileSchema = new mongoose.Schema({
     fullName: String,
     bio: String,
     skills: [String],
-    avatarPath: { type: String, default: '' },
+    avatarPath: { type: String, default: '' }, // MODIFICATION: Changed default from pravatar URL to empty string
     phone: String,
     email: String,
     linkedin: String,
@@ -17,11 +17,7 @@ const ProfileSchema = new mongoose.Schema({
     galleryImagePaths: [String],
     services: { type: Map, of: Number },
     cvPath: { type: String, default: '' },
-    isVerified: { type: Boolean, default: false },
-    location: { type: String, default: '' },
-    // --- RATING FIELDS ---
-    averageRating: { type: Number, default: 0 },
-    ratingCount: { type: Number, default: 0 },
+    isVerified: { type: Boolean, default: false }, // <-- NEW
 });
 
 module.exports = mongoose.model('Profile', ProfileSchema);

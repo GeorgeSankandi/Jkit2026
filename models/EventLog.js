@@ -26,7 +26,13 @@ const EVENT_TYPES = [
     'NEWS_ARTICLE_LIKED',
     'NEWS_ARTICLE_DISLIKED',
     'NEWS_ARTICLE_FAVORITED',
-    'CONTACT_FORM_SUBMISSION' // <-- NEW
+    'EVENT_LIKED',
+    'EVENT_DISLIKED',
+    'EVENT_FAVORITED',
+    'EVENT_CREATED_BY_USER', // <-- NEW
+    'PRODUCT_CREATED', // <-- NEW
+    'PRODUCT_UPDATED', // <-- NEW
+    'PRODUCT_DELETED' // <-- NEW
 ];
 
 const EventLogSchema = new mongoose.Schema({

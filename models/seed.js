@@ -1,3 +1,5 @@
+// seed.js
+
 require('dotenv').config();
 const mongoose = require('mongoose');
 const seedData = require('./utils/seedData');
@@ -13,11 +15,13 @@ const Like = require('./models/Like');
 const AgencyRequest = require('./models/AgencyRequest');
 const { EventLog } = require('./models/EventLog');
 const Notification = require('./models/Notification');
+const ImportantEvent = require('./models/ImportantEvent');
 const Follower = require('./models/Follower');
+const OriginalEvent = require('./models/OriginalEvent');
 const NewsArticle = require('./models/NewsArticle');
 const TimelineEvent = require('./models/TimelineEvent');
 const Counter = require('./models/Counter');
-const Rating = require('./models/Rating'); // <-- NEW
+const Product = require('./models/Product'); // <-- NEW
 
 const seedDatabase = async () => {
     try {
@@ -40,11 +44,13 @@ const seedDatabase = async () => {
         await AgencyRequest.deleteMany();
         await EventLog.deleteMany();
         await Notification.deleteMany();
+        await ImportantEvent.deleteMany();
         await Follower.deleteMany();
+        await OriginalEvent.deleteMany();
         await NewsArticle.deleteMany();
         await TimelineEvent.deleteMany();
         await Counter.deleteMany();
-        await Rating.deleteMany(); // <-- NEW
+        await Product.deleteMany(); // <-- NEW
         console.log('Data cleared.');
 
         // Insert new data

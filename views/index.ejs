@@ -1,3 +1,4 @@
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -673,21 +674,127 @@
         }
         
         .grid-container { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: clamp(1rem, 4vw, 2rem); }
-        .job-card, .person-card, .agency-card { background: var(--jkit-bg-card-alt); border-radius: 15px; overflow: hidden; box-shadow: var(--jkit-shadow); transition: all 0.3s ease; display: flex; flex-direction: column; }
-        .job-card:hover, .person-card:hover, .agency-card:hover { transform: translateY(-5px); box-shadow: 0 8px 30px rgba(0,0,0,0.1); }
+        .job-card, .person-card, .agency-card, .product-card { background: var(--jkit-bg-card-alt); border-radius: 15px; overflow: hidden; box-shadow: var(--jkit-shadow); transition: all 0.3s ease; display: flex; flex-direction: column; }
+        .job-card:hover, .person-card:hover, .agency-card:hover, .product-card:hover { transform: translateY(-5px); box-shadow: 0 8px 30px rgba(0,0,0,0.1); }
         .card-image-container { width: 100%; aspect-ratio: 1 / 1; overflow: hidden; background-color: #e0e0e0; position: relative; }
         .card-image-container img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.4s ease; }
-        .job-card:hover img, .person-card:hover img, .agency-card:hover img { transform: scale(1.05); }
+        .job-card:hover img, .person-card:hover img, .agency-card:hover img, .product-card:hover img { transform: scale(1.05); }
         
-        .person-card, .job-card {
+        .person-card, .job-card, .product-card {
             border-radius: 20px;
             box-shadow: 0px 5px 30px 0px rgba(0, 4, 71, 0.15);
         }
-        .person-card .card-image-container, .job-card .card-image-container {
+        .person-card .card-image-container, .job-card .card-image-container, .product-card .card-image-container {
             aspect-ratio: 285 / 190; /* This creates the specific rectangular shape */
         }
-        .person-card .card-content, .job-card .card-content {
+        .person-card .card-content, .job-card .card-content, .product-card .card-content {
              padding: 30px;
+        }
+        
+        /* Product Detail Page Styles */
+        .product-detail-container {
+            background: var(--jkit-bg-card);
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: var(--jkit-shadow);
+        }
+        .product-detail-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            padding: 2rem;
+        }
+        .product-images-section {
+            order: 1;
+        }
+        .product-info-section {
+            order: 2;
+        }
+        .product-main-image-container {
+            aspect-ratio: 1/1;
+            width: 100%;
+            border-radius: 12px;
+            overflow: hidden;
+            background-color: #e0e0e0;
+            margin-bottom: 1.5rem;
+            cursor: pointer;
+        }
+        .product-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1rem;
+            flex-wrap: wrap;
+        }
+        .product-category {
+            background: var(--jkit-primary);
+            color: white;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+        .product-title {
+            margin-bottom: 0.5rem;
+            border-bottom: none;
+        }
+        .product-price {
+            font-size: 2rem;
+            color: var(--jkit-primary);
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+        }
+        .product-description-section,
+        .product-seller-section {
+            background: var(--jkit-bg);
+            padding: 1.5rem;
+            border-radius: 12px;
+            margin-bottom: 1.5rem;
+        }
+        .product-description-section h3,
+        .product-seller-section h3 {
+            color: var(--jkit-dark);
+            margin-bottom: 0.75rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+        .product-description-section p {
+            color: var(--jkit-text-muted);
+            line-height: 1.6;
+        }
+        .product-seller-section img {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+        .product-seller-section p {
+            margin-bottom: 0.5rem;
+        }
+        .product-seller-section p:last-of-type {
+            color: var(--jkit-text-muted);
+            font-size: 0.9rem;
+            margin-bottom: 1rem;
+        }
+        
+        /* Product Gallery Styles */
+        .product-gallery-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+            gap: 10px;
+            margin-bottom: 1.5rem;
+        }
+        .product-gallery-thumbnail {
+            aspect-ratio: 1/1;
+            border-radius: 8px;
+            overflow: hidden;
+            cursor: pointer;
+            border: 2px solid transparent;
+            transition: border-color 0.2s;
+        }
+        .product-gallery-thumbnail.active {
+            border-color: var(--jkit-primary);
         }
         
         .card-interactions { 
@@ -741,57 +848,7 @@
         .card-meta { display: flex; justify-content: space-between; align-items: center; font-size: 0.9rem; color: var(--jkit-primary); font-weight: 600; margin-bottom: 1.5rem; flex-wrap: wrap; gap: 1rem; }
         .card-meta span { display: flex; align-items: center; gap: 0.5rem; }
         .card-price { font-size: 1.5rem; font-weight: 700; color: var(--jkit-secondary); }
-        .card-footer { 
-            margin-top: auto; 
-            padding: 1rem 1.5rem; 
-            border-top: 1px solid var(--jkit-border-color); 
-            display: flex; 
-            justify-content: space-between; 
-            align-items: center; 
-            gap: 0.75rem; 
-            flex-wrap: wrap; 
-        }
-        .card-footer > div:first-child {
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-            flex-wrap: wrap;
-        }
-        .card-footer-interactions {
-            display: flex;
-            gap: 1rem;
-            align-items: center;
-            flex-shrink: 0;
-        }
-
-        .card-footer-interactions .interaction-item {
-            display: flex;
-            align-items: center;
-            gap: 0.25rem;
-            color: var(--jkit-text-muted);
-        }
-        .card-footer-interactions .interaction-item button {
-            background: none;
-            border: none;
-            cursor: pointer;
-            font-size: 1.1rem;
-            color: inherit;
-            padding: 0;
-            transition: all 0.2s ease;
-        }
-        .card-footer-interactions .interaction-item button:hover {
-            transform: scale(1.1);
-        }
-        .card-footer-interactions .interaction-item .count {
-            font-size: 0.9rem;
-            font-weight: 600;
-        }
-        .card-footer-interactions .interaction-item button.thumb-liked {
-            color: var(--jkit-primary);
-        }
-        .card-footer-interactions .interaction-item button.disliked {
-            color: var(--airbnb-red);
-        }
+        .card-footer { margin-top: auto; padding: 1rem 1.5rem; border-top: 1px solid var(--jkit-border-color); display: flex; justify-content: center; align-items: center; gap: 0.75rem; flex-wrap: wrap; }
         .card-footer .jkit-btn-outline { padding: 6px 14px; font-size: 0.8rem; }
         .card-tags { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 1rem; }
         .card-tag { background: rgba(0, 82, 204, 0.1); color: var(--jkit-primary); padding: 4px 10px; border-radius: 20px; font-size: 0.8rem; font-weight: 600; }
@@ -861,6 +918,80 @@
             text-decoration: none;
             cursor: pointer;
         }
+
+        /* Product Image Carousel */
+        #product-carousel-modal {
+            background-color: rgba(0, 0, 0, 0.9);
+        }
+        #product-carousel-modal .modal-content {
+            background-color: transparent;
+            box-shadow: none;
+            max-width: 90vw;
+            max-height: 90vh;
+            padding: 0;
+        }
+        .carousel-container {
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 400px;
+        }
+        .carousel-image {
+            max-width: 100%;
+            max-height: 80vh;
+            object-fit: contain;
+            border-radius: 5px;
+        }
+        .carousel-nav {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background: rgba(255, 255, 255, 0.8);
+            border: none;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            font-size: 24px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background-color 0.3s;
+            z-index: 10;
+        }
+        .carousel-nav:hover {
+            background: rgba(255, 255, 255, 1);
+        }
+        .carousel-prev { left: 20px; }
+        .carousel-next { right: 20px; }
+        .carousel-indicators {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 20px;
+        }
+        .carousel-indicator {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.5);
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        .carousel-indicator.active {
+            background: rgba(255, 255, 255, 1);
+        }
+        #product-carousel-close {
+            position: absolute;
+            top: 20px;
+            right: 30px;
+            color: white;
+            font-size: 40px;
+            font-weight: bold;
+            cursor: pointer;
+            z-index: 1000;
+        }
         
         /* Dashboard Styles */
         .jkit-btn-outline {
@@ -891,35 +1022,47 @@
         }
         .dashboard-panel.active { display: block; }
         .dashboard-content h3 { margin-top: 0; padding-bottom: 1rem; border-bottom: 1px solid var(--jkit-border-color); }
-        .my-jobs-list, .my-events-list, .my-news-list, .my-agency-members-list { list-style: none; margin-top: 2rem; }
-        .my-jobs-list li, .my-events-list li, .my-news-list li, .my-agency-members-list li { display: flex; flex-wrap: wrap; align-items: center; gap: 1rem; padding: 1rem; border-bottom: 1px solid var(--jkit-border-color); }
-        .my-jobs-list li:last-child, .my-events-list li:last-child, .my-news-list li:last-child, .my-agency-members-list li:last-child { border-bottom: none; }
+        .my-jobs-list, .my-events-list, .my-news-list, .my-agency-members-list, .my-products-list { list-style: none; margin-top: 2rem; }
+        .my-jobs-list li, .my-events-list li, .my-news-list li, .my-agency-members-list li, .my-products-list li { display: flex; flex-wrap: wrap; align-items: center; gap: 1rem; padding: 1rem; border-bottom: 1px solid var(--jkit-border-color); }
+        .my-jobs-list li:last-child, .my-events-list li:last-child, .my-news-list li:last-child, .my-agency-members-list li:last-child, .my-products-list li:last-child { border-bottom: none; }
         .my-jobs-list li.highlight {
             background-color: rgba(0, 102, 255, 0.08);
             box-shadow: 0 0 0 2px rgba(0, 102, 255, 0.3);
             border-radius: 8px;
             transition: all 0.5s ease-out;
         }
-        .job-list-image, .event-list-title, .news-list-title, .agency-member-list-image { width: clamp(45px, 12vw, 60px); height: clamp(45px, 12vw, 60px); border-radius: 8px; object-fit: cover; flex-shrink: 0; }
+        .job-list-image, .event-list-title, .news-list-title, .agency-member-list-image, .product-list-image { width: clamp(45px, 12vw, 60px); height: clamp(45px, 12vw, 60px); border-radius: 8px; object-fit: cover; flex-shrink: 0; }
         .agency-member-list-image { border-radius: 50%; }
-        .job-list-title, .event-list-title, .news-list-title, .agency-member-list-title { flex-grow: 1; font-weight: 600; }
-        .job-status { padding: 4px 10px; border-radius: 20px; font-size: 0.8rem; font-weight: 600; text-transform: capitalize; margin-left: 1rem; }
-        .job-status.open { background-color: #d4edda; color: #155724; }
+        .job-list-title, .event-list-title, .news-list-title, .agency-member-list-title, .product-list-title { flex-grow: 1; font-weight: 600; }
+        .job-status, .product-status { padding: 4px 10px; border-radius: 20px; font-size: 0.8rem; font-weight: 600; text-transform: capitalize; margin-left: 1rem; }
+        .job-status.open, .product-status.available { background-color: #d4edda; color: #155724; }
         .job-status.assigned { background-color: #fff3cd; color: #856404; }
         .job-status.in-progress { background-color: #cce5ff; color: #004085; }
-        .job-status.closed { background-color: #f8d7da; color: #721c24; }
-        .job-actions, .event-actions, .news-actions, .agency-member-actions { margin-left: auto; display: flex; gap: 0.5rem; }
-        .job-actions button, .event-actions button, .news-actions button, .agency-member-actions button { background: none; border: none; cursor: pointer; font-size: 1.1rem; color: var(--jkit-text-muted); transition: color 0.2s; }
-        .job-actions .edit-btn:hover, .event-actions .edit-btn:hover, .news-actions .edit-btn:hover, .agency-member-actions .edit-btn:hover { color: var(--jkit-primary); }
-        .job-actions .delete-btn:hover, .event-actions .delete-btn:hover, .news-actions .delete-btn:hover, .agency-member-actions .delete-btn:hover { color: #E72E23; }
+        .job-status.closed, .product-status.sold { background-color: #f8d7da; color: #721c24; }
+        .job-actions, .event-actions, .news-actions, .agency-member-actions, .product-actions { margin-left: auto; display: flex; gap: 0.5rem; }
+        .job-actions button, .event-actions button, .news-actions button, .agency-member-actions button, .product-actions button { background: none; border: none; cursor: pointer; font-size: 1.1rem; color: var(--jkit-text-muted); transition: color 0.2s; }
+        .job-actions .edit-btn:hover, .event-actions .edit-btn:hover, .news-actions .edit-btn:hover, .agency-member-actions .edit-btn:hover, .product-actions .edit-btn:hover { color: var(--jkit-primary); }
+        .job-actions .delete-btn:hover, .event-actions .delete-btn:hover, .news-actions .delete-btn:hover, .agency-member-actions .delete-btn:hover, .product-actions .delete-btn:hover { color: #E72E23; }
         .job-actions .close-btn:hover { color: #ffc107; }
         .image-upload-wrapper { display: flex; align-items: center; gap: 1rem; flex-wrap: wrap; }
         .image-preview { object-fit: cover; background-color: #eee; flex-shrink: 0; }
         #profile-avatar-preview { width: clamp(60px, 18vw, 80px); height: clamp(60px, 18vw, 80px); border-radius: 50%; }
-        #agency-image-preview, #job-image-preview, #event-image-preview, #original-event-image-preview, #news-image-preview, #timeline-event-image-preview { width: clamp(80px, 25vw, 120px); height: auto; aspect-ratio: 4 / 3; border-radius: 8px; }
+        #agency-image-preview, #job-image-preview, #event-image-preview, #original-event-image-preview, #news-image-preview, #timeline-event-image-preview, #product-image-preview { width: clamp(80px, 25vw, 120px); height: auto; aspect-ratio: 4 / 3; border-radius: 8px; }
         .image-upload-label { display: inline-block; padding: 8px 16px; border-radius: 6px; cursor: pointer; background: #f0f4f8; color: #333; font-weight: 600; transition: background-color 0.2s; }
         .image-upload-label:hover { background: #e1e8f0; }
         input[type="file"] { display: none; }
+
+        /* Multiple Images Preview */
+        .multiple-images-preview { display: flex; flex-wrap: wrap; gap: 10px; }
+        .image-slot { position: relative; width: clamp(80px, 20vw, 100px); height: auto; aspect-ratio: 4 / 3; border-radius: 8px; overflow: hidden; border: 2px dashed var(--jkit-border-color); }
+        .image-slot:not(.empty) { border: 2px solid var(--jkit-primary); }
+        .image-slot .image-preview { width: 100%; height: 100%; object-fit: cover; }
+        .image-slot .image-upload-label { position: absolute; bottom: 5px; left: 50%; transform: translateX(-50%); font-size: 0.7rem; padding: 4px 8px; }
+        .image-slot .remove-image-btn { position: absolute; top: 5px; right: 5px; background: rgba(255, 0, 0, 0.8); color: white; border: none; border-radius: 50%; width: 20px; height: 20px; cursor: pointer; font-size: 12px; line-height: 1; }
+        .image-slot.empty .image-preview { opacity: 0.5; }
+
+        /* Product Image Indicators */
+        .image-indicator { position: absolute; top: 10px; right: 10px; background: rgba(0, 0, 0, 0.7); color: white; padding: 4px 8px; border-radius: 12px; font-size: 0.8rem; display: flex; align-items: center; gap: 4px; }
 
         /* --- NEW: Dashboard Geolocation Map Styles --- */
         #dashboard-map-container {
@@ -1260,19 +1403,7 @@
         /* News Section */
         .news-section { background-color: var(--jkit-dark-alt); padding: clamp(2rem, 8vw, 4rem) 0; }
         .news-section h2 { color: var(--jkit-text-light); border-bottom-color: var(--jkit-primary); }
-        .news-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 2rem; }
-        @media (max-width: 1400px) {
-            .news-grid { grid-template-columns: repeat(4, 1fr); }
-        }
-        @media (max-width: 1024px) {
-            .news-grid { grid-template-columns: repeat(3, 1fr); }
-        }
-        @media (max-width: 768px) {
-            .news-grid { grid-template-columns: repeat(2, 1fr); }
-        }
-        @media (max-width: 480px) {
-            .news-grid { grid-template-columns: 1fr; }
-        }
+        .news-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 2rem; }
         .news-card { background-color: var(--jkit-dark); border-radius: 15px; overflow: hidden; box-shadow: var(--jkit-shadow); transition: transform 0.3s ease; display: flex; flex-direction: column; }
         .news-card:hover { transform: translateY(-5px); }
         .news-card-image {
@@ -1722,44 +1853,6 @@
         }
         /* --- END: Verification Success Page Styles --- */
 
-        /* --- NEW: RATING STYLES --- */
-        .rating-summary {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            color: var(--jkit-text-muted);
-            margin-bottom: 1rem;
-        }
-        .stars {
-            color: var(--jkit-gold);
-            font-size: 1.1rem;
-        }
-        .rating-count {
-            font-size: 0.85rem;
-        }
-        .rate-job-btn {
-            background-color: var(--jkit-gold);
-            color: var(--jkit-dark);
-            font-weight: 600;
-        }
-        #rating-modal .stars-input {
-            display: flex;
-            justify-content: center;
-            gap: 0.5rem;
-            font-size: 2rem;
-            margin: 1rem 0;
-        }
-        #rating-modal .stars-input i {
-            color: #ccc;
-            cursor: pointer;
-            transition: color 0.2s;
-        }
-        #rating-modal .stars-input i:hover,
-        #rating-modal .stars-input i.selected {
-            color: var(--jkit-gold);
-        }
-        /* --- END: RATING STYLES --- */
-
         /* Responsive Design */
         @media (max-width: 991px) {
             .hero-tabs-container {
@@ -1902,7 +1995,7 @@
             /* --- END NEW --- */
 
             /* --- RESPONSIVENESS IMPLEMENTATION --- */
-            #profile-panel, #following-panel {
+            #profile-panel, #following-panel, #products-panel {
                 padding: 1rem;
                 width: 100%;
                 box-sizing: border-box;
@@ -1910,6 +2003,35 @@
             .dashboard-content, .profile-main-content, .agency-main-content, .dashboard-nav, .profile-sidebar, .agency-sidebar {
                 padding: 1.5rem;
             }
+            
+            /* --- PRODUCT DETAIL PAGE RESPONSIVE --- */
+            .product-detail-grid {
+                grid-template-columns: 1fr;
+                gap: 1.5rem;
+                padding: 1rem;
+            }
+            .product-title {
+                font-size: 1.5rem;
+                margin-bottom: 0.5rem;
+            }
+            .product-price {
+                font-size: 1.5rem;
+            }
+            .product-description-section,
+            .product-seller-section {
+                padding: 1rem;
+            }
+            .product-gallery-thumbnail {
+                min-width: 80px;
+            }
+            .product-header {
+                gap: 0.5rem;
+            }
+            .product-category {
+                font-size: 0.75rem;
+                padding: 3px 8px;
+            }
+        }
 
             /* --- NEW: Responsive Admin Timeline --- */
             .admin-timeline-table {
@@ -2013,10 +2135,10 @@
             .dashboard-content, .profile-main-content, .agency-main-content, .dashboard-nav, .profile-sidebar, .agency-sidebar { padding: 1.5rem 1rem; }
             
             /* --- RESPONSIVENESS IMPLEMENTATION --- */
-            .my-jobs-list li, .my-events-list li, .my-news-list li, .my-agency-members-list li {
+            .my-jobs-list li, .my-events-list li, .my-news-list li, .my-agency-members-list li, .my-products-list li {
                 flex-wrap: wrap;
             }
-            .job-actions, .event-actions, .news-actions, .agency-member-actions {
+            .job-actions, .event-actions, .news-actions, .agency-member-actions, .product-actions {
                 margin-left: 0;
                 flex-basis: 100%;
                 margin-top: 0.5rem;
@@ -2258,15 +2380,15 @@
                 padding: 0.75rem;
                 font-size: 0.9rem;
             }
-            .my-jobs-list li {
+            .my-jobs-list li, .my-products-list li {
                 padding: 0.5rem;
                 gap: 0.5rem;
             }
-            .job-list-image, .event-list-image, .news-list-image, .agency-member-list-image {
+            .job-list-image, .event-list-image, .news-list-image, .agency-member-list-image, .product-list-image {
                 width: 32px;
                 height: 32px;
             }
-            .job-list-title {
+            .job-list-title, .product-list-title {
                 flex-basis: 100%; /* Allow title to take full width */
                 order: -1; /* Move title to the top */
                 font-size: 0.9em;
@@ -2519,6 +2641,7 @@
                 <li class="nav-item"><a href="#" class="nav-link nav-action-item" data-page="about-page">About</a></li>
                 <li class="nav-item"><a href="#" class="nav-link nav-action-item" data-page="jobs-page">Jobs</a></li>
                 <li class="nav-item"><a href="#" class="nav-link nav-action-item" data-page="people-page">People</a></li>
+                <li class="nav-item"><a href="#" class="nav-link nav-action-item" data-page="products-page">Products</a></li>
                 <li class="nav-item"><a href="#" class="nav-link nav-action-item" data-page="employers-page">Employers</a></li>
                 <li class="nav-item"><a href="#" class="nav-link nav-action-item" data-page="zone-page">Agency</a></li>
                 <li class="nav-item"><a href="#" class="nav-link nav-action-item" data-page="contact-page">Contact</a></li>
@@ -2606,6 +2729,15 @@
                     <h2>J-KIT Timeline</h2>
                     <div class="timeline-container" id="timeline-container">
                         <!-- Timeline events will be rendered here by JS -->
+                    </div>
+                </div>
+            </section>
+
+            <section class="events-section" id="original-events-section">
+                <div class="container">
+                    <h2>Events</h2>
+                    <div class="events-grid" id="original-events-grid">
+                        <!-- Original Events will be rendered here by JS -->
                     </div>
                 </div>
             </section>
@@ -2797,6 +2929,37 @@
             <div class="container"><h2>Verified Workers & Creatives</h2><div class="grid-container" id="people-grid"></div></div>
         </section>
 
+        <!-- PRODUCTS PAGE (NEW) -->
+        <section id="products-page" class="page-content">
+            <div class="page-header">
+                <div class="container">
+                    <div class="page-header-title-container">
+                        <h1>Marketplace</h1>
+                        <button class="jkit-btn" id="post-new-product-from-products-page-btn" style="display: none;">
+                            <i class="fas fa-plus"></i> Sell a Product
+                        </button>
+                    </div>
+                    <div class="airbnb-filters-container" id="products-filter-container">
+                        <div class="filter-item flex-grow">
+                            <label for="search-products-input">Search Products</label>
+                            <input type="text" id="search-products-input" placeholder="e.g., handmade crafts, phone..." style="pointer-events: auto;">
+                        </div>
+                        <div class="filter-item">
+                            <label for="product-category-filter">Category</label>
+                            <select id="product-category-filter">
+                                <option value="">All Categories</option>
+                                <!-- Categories will be populated by JS -->
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="container">
+                <h2 style="text-align: left; border-bottom: none; margin-bottom: 2rem;">Products for Sale</h2>
+                <div class="grid-container" id="products-grid"></div>
+            </div>
+        </section>
+
         <!-- EMPLOYERS PAGE -->
         <section id="employers-page" class="page-content">
             <div class="page-header">
@@ -2856,6 +3019,18 @@
         
         <!-- DASHBOARD PAGE -->
         <section id="dashboard-page" class="page-content"><div class="container"><div id="dashboard-container"></div></div></section>
+
+        <!-- PRODUCT DETAIL PAGE -->
+        <section id="product-detail-page" class="page-content">
+            <div class="container">
+                <button class="jkit-btn jkit-btn-outline" id="back-to-products-btn" style="margin-bottom: 1.5rem;">
+                    <i class="fas fa-arrow-left"></i> Back to Products
+                </button>
+                <div id="product-detail-content">
+                    <!-- Product details will be populated here -->
+                </div>
+            </div>
+        </section>
         
         <!-- CONTACT PAGE -->
         <section id="contact-page" class="page-content">
@@ -2940,7 +3115,6 @@
                     <aside class="profile-sidebar">
                         <img src="" alt="Profile Avatar" id="profile-detail-avatar" class="enlargeable-image" style="cursor: pointer;">
                         <h3 id="profile-detail-name"></h3>
-                        <div id="profile-detail-rating-summary" class="rating-summary" style="justify-content: center;"></div>
                         <p id="profile-status-badge" class="profile-status-badge">Type of worker talent</p>
                         <div class="profile-contact-info">
                             <a href="#" id="profile-detail-phone"></a>
@@ -3003,6 +3177,7 @@
                     <li><a href="#" class="nav-action-item" data-page="about-page">About Us</a></li>
                     <li><a href="#" class="nav-action-item" data-page="jobs-page">Jobs</a></li>
                     <li><a href="#" class="nav-action-item" data-page="people-page">People</a></li>
+                    <li><a href="#" class="nav-action-item" data-page="products-page">Products</a></li>
                     <li><a href="#" class="nav-action-item" data-page="employers-page">Employers</a></li>
                     <li><a href="#" class="nav-action-item" data-page="zone-page">Agency Zone</a></li>
                     <li><a href="#" class="nav-action-item" data-page="contact-page">Contact</a></li>
@@ -3112,10 +3287,55 @@
         </div>
     </div>
     <div id="job-modal" class="modal"><div class="modal-content"><span class="close-btn">&times;</span><h2 id="job-modal-title">Post a New Job</h2><form id="job-form"><input type="hidden" id="job-id"><input type="hidden" id="job-image-path-hidden"><input type="hidden" id="job-assignedTo"><div class="form-group"><label for="job-title">Job Title *</label><input type="text" id="job-title" placeholder="e.g., Professional Painter, Weekend Babysitter" required></div><div class="form-group"><label for="job-type">Job Type *</label><select id="job-type" required><option value="" disabled selected>Select a job type</option><option value="Formal Job">Formal Job</option><option value="Informal Job">Informal Job</option><option value="Talent Gig">Talent Gig</option></select></div><div class="form-group"><label for="job-description">Description & Job Requirements *</label><textarea id="job-description" required></textarea></div><div class="form-group"><label for="job-location">Location (e.g., Windhoek, Mayo Street) *</label><input type="text" id="job-location" required></div><div class="form-group" id="job-price-group"><label for="job-price">Pay Amount (N$) *</label><input type="number" id="job-price" placeholder="e.g., 250" required></div><div class="form-group"><label for="job-payRate">Pay Rate *</label><select id="job-payRate" required><option value="once-off">Once-Off (Total)</option><option value="per hour">Per Hour</option><option value="per day">Per Day</option><option value="per week">Per Week</option><option value="per month">Per Month</option></select></div><div class="form-group"><label for="job-maxPeople">Maximum People Needed *</label><input type="number" id="job-maxPeople" placeholder="e.g., 1" value="1" min="1" required></div><div class="form-group"><label for="job-duration">Job Duration *</label><select id="job-duration" required><option value="Temporal">Temporal</option><option value="Day">Day</option><option value="Hour">Hour</option><option value="Permanent">Permanent</option></select></div><div class="form-group"><label for="job-dueDate">Due Date *</label><input type="date" id="job-dueDate" required></div><div class="form-group"><label>Job Image</label><div class="image-upload-wrapper"><img src="/jkitlogo.png" alt="Job image preview" id="job-image-preview" class="image-preview"><label for="job-image-input" class="image-upload-label">Upload Image</label><input type="file" id="job-image-input" accept="image/*"></div></div><button type="submit" class="jkit-btn" style="width: 100%;">Save Job</button></form></div></div>
+    <!-- NEW: Product Modal -->
+    <div id="product-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-btn">&times;</span>
+            <h2 id="product-modal-title">Add a New Product</h2>
+            <form id="product-form">
+                <input type="hidden" id="product-id">
+                <input type="hidden" id="product-images-hidden" value="[]">
+                <div class="form-group">
+                    <label for="product-name">Product Name *</label>
+                    <input type="text" id="product-name" placeholder="e.g., Handmade Beaded Necklace" required>
+                </div>
+                <div class="form-group">
+                    <label for="product-description">Description *</label>
+                    <textarea id="product-description" required></textarea>
+                </div>
+                 <div class="form-group">
+                    <label for="product-category">Category</label>
+                    <input type="text" id="product-category" placeholder="e.g., Crafts, Electronics, Clothing">
+                </div>
+                <div class="form-group">
+                    <label for="product-price">Price (N$) *</label>
+                    <input type="number" id="product-price" placeholder="e.g., 150" required>
+                </div>
+                <div class="form-group">
+                    <label>Product Images (up to 5)</label>
+                    <div class="image-upload-wrapper">
+                        <div id="product-images-preview" class="multiple-images-preview">
+                            <div class="image-slot empty" data-slot="0">
+                                <img src="/jkitlogo.png" alt="Product image 1" class="image-preview">
+                                <label for="product-image-input-0" class="image-upload-label">Upload Image 1</label>
+                                <input type="file" id="product-image-input-0" accept="image/*" data-slot="0">
+                                <button type="button" class="remove-image-btn" style="display: none;">×</button>
+                            </div>
+                        </div>
+                        <button type="button" id="add-product-image-btn" class="jkit-btn jkit-btn-outline" style="margin-top: 10px;">Add Another Image</button>
+                    </div>
+                </div>
+                <button type="submit" class="jkit-btn" style="width: 100%;">Save Product</button>
+            </form>
+        </div>
+    </div>
+    <div id="event-modal" class="modal"><div class="modal-content"><span class="close-btn">&times;</span><h2 id="event-modal-title">Create New Event</h2><form id="event-form"><input type="hidden" id="event-id"><input type="hidden" id="event-image-path-hidden"><div class="form-group"><label for="event-title">Event Title</label><input type="text" id="event-title" required></div><div class="form-group"><label for="event-description">Description</label><textarea id="event-description" required></textarea></div><div class="form-group"><label for="event-date">Date</label><input type="date" id="event-date" required></div><div class="form-group"><label for="event-location">Location</label><input type="text" id="event-location" required></div><div class="form-group"><label for="event-link">"Learn More" Link</label><input type="url" id="event-link"></div><div class="form-group"><label>Event Image</label><div class="image-upload-wrapper"><img src="/jkitlogo.png" alt="Event image preview" id="event-image-preview" class="image-preview"><label for="event-image-input" class="image-upload-label">Upload Image</label><input type="file" id="event-image-input" accept="image/*"></div></div><button type="submit" class="jkit-btn" style="width: 100%;">Save Event</button></form></div></div>
     <!-- NEW: Timeline Event Modal -->
     <div id="timeline-event-modal" class="modal"><div class="modal-content"><span class="close-btn">&times;</span><h2 id="timeline-event-modal-title">Create New Timeline Event</h2><form id="timeline-event-form"><input type="hidden" id="timeline-event-id"><input type="hidden" id="timeline-event-image-path-hidden"><div class="form-group"><label for="timeline-event-title">Event Title</label><input type="text" id="timeline-event-title" required></div><div class="form-group"><label for="timeline-event-description">Description</label><textarea id="timeline-event-description" required></textarea></div><div class="form-group"><label for="timeline-event-date">Date</label><input type="date" id="timeline-event-date" required></div><div class="form-group"><label>Event Image</label><div class="image-upload-wrapper"><img src="/jkitlogo.png" alt="Timeline event image preview" id="timeline-event-image-preview" class="image-preview"><label for="timeline-event-image-input" class="image-upload-label">Upload Image</label><input type="file" id="timeline-event-image-input" accept="image/*"></div></div><button type="submit" class="jkit-btn" style="width: 100%;">Save Timeline Event</button></form></div></div>
+    <!-- NEW: Original Event Modal -->
+    <div id="original-event-modal" class="modal"><div class="modal-content"><span class="close-btn">&times;</span><h2 id="original-event-modal-title">Create New Original Event</h2><form id="original-event-form"><input type="hidden" id="original-event-id"><input type="hidden" id="original-event-image-path-hidden"><div class="form-group"><label for="original-event-title">Event Title</label><input type="text" id="original-event-title" required></div><div class="form-group"><label for="original-event-description">Description</label><textarea id="original-event-description" required></textarea></div><div class="form-group"><label for="original-event-date">Date</label><input type="date" id="original-event-date" required></div><div class="form-group"><label>Event Image</label><div class="image-upload-wrapper"><img src="/jkitlogo.png" alt="Original event image preview" id="original-event-image-preview" class="image-preview"><label for="original-event-image-input" class="image-upload-label">Upload Image</label><input type="file" id="original-event-image-input" accept="image/*"></div></div><button type="submit" class="jkit-btn" style="width: 100%;">Save Original Event</button></form></div></div>
     <div id="news-modal" class="modal"><div class="modal-content"><span class="close-btn">&times;</span><h2 id="news-modal-title">Create News Article</h2><form id="news-form"><input type="hidden" id="news-id"><input type="hidden" id="news-image-path-hidden"><div class="form-group"><label for="news-title">Title</label><input type="text" id="news-title" required></div><div class="form-group"><label for="news-content">Content</label><textarea id="news-content" required style="min-height: 200px;"></textarea></div><div class="form-group"><label>Article Image</label><div class="image-upload-wrapper"><img src="/jkitlogo.png" alt="News image preview" id="news-image-preview" class="image-preview"><label for="news-image-input" class="image-upload-label">Upload Image</label><input type="file" id="news-image-input" accept="image/*"></div></div><button type="submit" class="jkit-btn" style="width: 100%;">Save Article</button></form></div></div>
-    <div id="read-more-modal" class="modal"><div class="modal-content"><span class="close-btn">&times;</span><h2 id="read-more-title"></h2><img src="/jkitlogo.png" alt="News article image" id="read-more-image"><p id="read-more-content"></p></div></div>
+    <div id="read-more-modal" class="modal"><div class="modal-content"><span class="close-btn">&times;</span><h2 id="read-more-title"></h2><img src="" alt="News article image" id="read-more-image" ><p id="read-more-content"></p></div></div>
     
     <div id="location-modal" class="modal">
         <div class="modal-content">
@@ -3248,35 +3468,6 @@
             </form>
         </div>
     </div>
-    
-    <!-- NEW: RATING MODAL -->
-    <div id="rating-modal" class="modal">
-        <div class="modal-content">
-            <span class="close-btn">&times;</span>
-            <h2>Rate Worker/Talent</h2>
-            <p>Please provide a rating for the work done by <strong id="rating-modal-worker-name"></strong> for the job: <strong id="rating-modal-job-title"></strong>.</p>
-            <form id="rating-form">
-                <input type="hidden" id="rating-job-id">
-                <input type="hidden" id="rating-worker-username">
-                <div class="form-group">
-                    <label>Your Rating</label>
-                    <div class="stars-input">
-                        <i class="far fa-star" data-value="1"></i>
-                        <i class="far fa-star" data-value="2"></i>
-                        <i class="far fa-star" data-value="3"></i>
-                        <i class="far fa-star" data-value="4"></i>
-                        <i class="far fa-star" data-value="5"></i>
-                    </div>
-                </div>
-                <div class="form-group">
-                    <label for="rating-comment">Comment (Optional)</label>
-                    <textarea id="rating-comment" placeholder="Provide details about your experience..."></textarea>
-                </div>
-                <button type="submit" class="jkit-btn" style="width: 100%;">Submit Rating</button>
-            </form>
-        </div>
-    </div>
-
 
     <nav class="mobile-bottom-nav">
         <a href="#" class="mobile-nav-item nav-action-item active" data-page="home-page">
@@ -3298,6 +3489,10 @@
         <a href="#" class="mobile-nav-item nav-action-item" data-page="zone-page">
             <i class="fas fa-user-tie"></i>
             <span>Agents</span>
+        </a>
+        <a href="#" class="mobile-nav-item nav-action-item" data-page="products-page">
+            <i class="fas fa-shopping-bag"></i>
+            <span>Products</span>
         </a>
     </nav>
 
@@ -3347,6 +3542,17 @@
         <img class="modal-content" id="image-viewer-content" alt="Enlarged View">
     </div>
 
+    <!-- Product Image Carousel Modal -->
+    <div id="product-carousel-modal" class="modal">
+        <span class="close-btn" id="product-carousel-close">&times;</span>
+        <div class="carousel-container">
+            <button class="carousel-nav carousel-prev" id="carousel-prev">&lt;</button>
+            <img class="carousel-image" id="carousel-image" alt="Product Image">
+            <button class="carousel-nav carousel-next" id="carousel-next">&gt;</button>
+        </div>
+        <div class="carousel-indicators" id="carousel-indicators"></div>
+    </div>
+
     <script src="/socket.io/socket.io.js"></script>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
 
@@ -3359,7 +3565,7 @@
             
             let initialContent = <%- JSON.stringify(content || {}) %>;
             let currentUser = <%- JSON.stringify(currentUser || null) %>;
-            
+            const googleMapsApiKey = "<%= process.env.GOOGLE_MAPS_API_KEY %>";
             let settings = <%- JSON.stringify(settings || {}) %>;
             let aboutContent = <%- JSON.stringify(aboutContent || {}) %>; 
 
@@ -3373,10 +3579,12 @@
             let allEventLogs = initialContent.eventLogs || [];
             let allNotifications = initialContent.notifications || [];
             let allFollowers = initialContent.followers || [];
+            let allImportantEvents = initialContent.importantEvents || [];
+            let allOriginalEvents = initialContent.originalEvents || [];
             let allNewsArticles = initialContent.newsArticles || [];
             let allConversations = initialContent.conversations || [];
             let allTimelineEvents = initialContent.timelineEvents || [];
-            let allRatings = initialContent.ratings || []; // <-- NEW
+            let allProducts = initialContent.products || []; // <-- NEW
 
             let currentDetailView = { type: null, id: null };
             const onlineUsers = new Set();
@@ -3386,6 +3594,7 @@
             const FALLBACK_JOB_IMG = '/jkitlogo.png';
             const FALLBACK_AGENCY_IMG = '/jkitlogo.png';
             const FALLBACK_EVENT_IMG = '/jkitlogo.png';
+            const FALLBACK_PRODUCT_IMG = '/jkitlogo.png'; // <-- NEW
             const AI_ASSISTANT_ID = 'ai_assistant';
 
             const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzCLsFTJJo5O9JU6C78gmH7Kv-wg74EW4i4okErEZQO429gCHNsYsMjYeaHKBMCBlpX/exec"; 
@@ -3408,13 +3617,17 @@
             const jobCategoryModal = document.getElementById('job-category-modal');
             const specificJobModal = document.getElementById('specific-job-modal');
             const imageViewerModal = document.getElementById('image-viewer-modal');
+            const eventViewMoreModal = document.getElementById('event-view-more-modal');
             const loginModal = document.getElementById('login-modal'); 
             const signupModal = document.getElementById('signup-modal'); 
             const jobModal = document.getElementById('job-modal'); 
+            const productModal = document.getElementById('product-modal'); // <-- NEW
+            const productCarouselModal = document.getElementById('product-carousel-modal'); // <-- NEW
             const applyModal = document.getElementById('apply-modal'); 
+            const eventModal = document.getElementById('event-modal'); 
             const timelineEventModal = document.getElementById('timeline-event-modal');
-            const ratingModal = document.getElementById('rating-modal'); // <-- NEW
-            const modals = [loginModal, signupModal, jobModal, applyModal, locationModal, cvModal, newsModal, readMoreModal, deleteAccountModal, jobCategoryModal, specificJobModal, imageViewerModal, timelineEventModal, ratingModal]; // <-- NEW
+            const originalEventModal = document.getElementById('original-event-modal');
+            const modals = [loginModal, signupModal, jobModal, applyModal, eventModal, locationModal, cvModal, newsModal, readMoreModal, deleteAccountModal, jobCategoryModal, specificJobModal, imageViewerModal, eventViewMoreModal, timelineEventModal, originalEventModal, productModal, productCarouselModal]; // <-- UPDATED
             
             function showModal(modal) { 
                 modals.forEach(m => m.style.display = 'none'); 
@@ -3496,9 +3709,14 @@
                 const { sectionId, stateParams, replaceHistory, filter } = options;
 
                 const currentPage = document.querySelector('.page-content.active-page');
-                const listPages = ['home-page', 'jobs-page', 'people-page', 'zone-page', 'employers-page'];
+                const listPages = ['home-page', 'jobs-page', 'people-page', 'zone-page', 'employers-page', 'products-page'];
                 if (currentPage && listPages.includes(currentPage.id) && currentPage.id !== pageId) {
                     sessionStorage.setItem('jkit_previousListPage', currentPage.id);
+                }
+                
+                // Handle product detail page
+                if (pageId === 'product-detail-page' && stateParams && stateParams.id) {
+                    renderProductDetailPage(stateParams.id);
                 }
                 
                 if (pageId === 'verification-success-page') {
@@ -3598,16 +3816,9 @@
             window.addEventListener('popstate', (event) => {
                 const imageViewerModal = document.getElementById('image-viewer-modal');
                 const applyModal = document.getElementById('apply-modal');
-                const chatPopup = document.getElementById('chat-popup');
-
-                if (!(event.state && event.state.modal) && (
-                    (imageViewerModal && imageViewerModal.style.display === 'flex') ||
-                    (applyModal && applyModal.style.display === 'flex') ||
-                    (chatPopup && chatPopup.style.display === 'flex')
-                )) {
-                    // Close any history-driven popups/modals
+                
+                if (!(event.state && event.state.modal) && (imageViewerModal.style.display === 'flex' || applyModal.style.display === 'flex')) {
                     closeModal(); 
-                    if (chatPopup && chatPopup.style.display === 'flex') closeChat();
                 }
 
                 if (event.state && event.state.page) {
@@ -3633,28 +3844,21 @@
                 // 2. Define the secondary fallback passed to the function
                 const secondaryFallback = fallbackSrc || defaultLogo;
 
-                console.log('displayImage called with:', { imagePath, fallbackSrc, defaultLogo, secondaryFallback });
-
                 // 3. Logic to determine initial source
-                if (imagePath && (imagePath.startsWith('/uploads/') || imagePath.startsWith('http'))) {
-                    console.log('Setting image to uploaded/http path:', imagePath);
-                    imgElement.src = imagePath;
+                if (imagePath && (imagePath.startsWith('/uploads/') || imagePath.startsWith('\\uploads\\') || imagePath.startsWith('http') || imagePath.startsWith('/'))) {
+                    // Normalize backslashes to forward slashes for web URLs
+                    const normalizedPath = imagePath.replace(/\\/g, '/');
+                    imgElement.src = normalizedPath;
                 } else {
-                    console.log('Setting image to fallback:', secondaryFallback);
                     imgElement.src = secondaryFallback;
                 }
 
-                console.log('Image element src after setting:', imgElement.src);
-
                 // 4. Error Handler: If the image fails (404), load the logo
                 imgElement.onerror = function() {
-                    console.log('Image failed to load, attempting fallback. Current src:', this.src);
                     // Prevent infinite loop: if the current src is ALREADY the logo, stop.
                     if (this.src.includes('jkitlogo.png')) {
-                        console.log('Already using logo fallback, stopping');
                         return; 
                     }
-                    console.log('Falling back to logo:', defaultLogo);
                     this.src = defaultLogo;
                     // Remove onerror to prevent infinite loops if the logo is also missing
                     this.onerror = null; 
@@ -3666,43 +3870,17 @@
                 const title = document.getElementById('location-modal-title');
                 const mapContainer = document.getElementById('map-container-modal');
                 
+                if (!googleMapsApiKey || googleMapsApiKey === "undefined" || googleMapsApiKey === "") {
+                    mapContainer.innerHTML = `<p style="padding: 2rem; text-align: center; color: var(--jkit-text-muted);">The Google Maps API key is not configured on the server. This feature is currently unavailable.</p>`;
+                } else {
+                    const encodedLocation = encodeURIComponent(locationString);
+                    const mapUrl = `https://www.google.com/maps/embed/v1/place?key=${googleMapsApiKey}&q=${encodedLocation}`;
+                    mapContainer.innerHTML = `<iframe width="100%" height="100%" frameborder="0" style="border:0" src="${mapUrl}" allowfullscreen></iframe>`;
+                }
+
                 title.textContent = `Location for ${agencyName}`;
                 showModal(modal);
-
-                // Delay map initialization to ensure modal is visible
-                setTimeout(() => {
-                    mapContainer.innerHTML = ''; // Clear previous map
-                    try {
-                        const map = L.map(mapContainer);
-                        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-                            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-                        }).addTo(map);
-
-                        // Use Nominatim to geocode the address
-                        fetch(`https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(locationString)}&format=json&limit=1`)
-                            .then(response => response.json())
-                            .then(data => {
-                                if (data && data.length > 0) {
-                                    const lat = parseFloat(data[0].lat);
-                                    const lon = parseFloat(data[0].lon);
-                                    map.setView([lat, lon], 14);
-                                    L.marker([lat, lon]).addTo(map)
-                                        .bindPopup(`<b>${agencyName}</b><br>${locationString}`)
-                                        .openPopup();
-                                } else {
-                                    mapContainer.innerHTML = `<p style="padding: 2rem; text-align: center; color: var(--jkit-text-muted);">Could not find location: ${locationString}</p>`;
-                                }
-                            })
-                            .catch(error => {
-                                console.error('Geocoding error:', error);
-                                mapContainer.innerHTML = `<p style="padding: 2rem; text-align: center; color: var(--jkit-text-muted);">Error loading map. Please try again later.</p>`;
-                            });
-                    } catch (e) {
-                         mapContainer.innerHTML = `<p style="padding: 2rem; text-align: center; color: var(--jkit-text-muted);">Error initializing map. It may have already been initialized.</p>`;
-                    }
-                }, 100);
             }
-
 
             function openImageViewer(src) {
                 const modalImg = document.getElementById('image-viewer-content');
@@ -3719,6 +3897,75 @@
                 }
             }
             
+            window.openProductCarousel = function(images, startIndex = 0) {
+                const modal = document.getElementById('product-carousel-modal');
+                const carouselImage = document.getElementById('carousel-image');
+                const indicatorsContainer = document.getElementById('carousel-indicators');
+                const prevBtn = document.getElementById('carousel-prev');
+                const nextBtn = document.getElementById('carousel-next');
+                
+                let currentIndex = startIndex;
+                
+                // Clear previous indicators
+                indicatorsContainer.innerHTML = '';
+                
+                // Create indicators
+                images.forEach((_, index) => {
+                    const indicator = document.createElement('div');
+                    indicator.className = `carousel-indicator ${index === 0 ? 'active' : ''}`;
+                    indicator.addEventListener('click', () => goToImage(index));
+                    indicatorsContainer.appendChild(indicator);
+                });
+                
+                function goToImage(index) {
+                    currentIndex = index;
+                    displayImage(carouselImage, images[currentIndex], FALLBACK_PRODUCT_IMG);
+                    
+                    // Update indicators
+                    document.querySelectorAll('.carousel-indicator').forEach((ind, i) => {
+                        ind.classList.toggle('active', i === currentIndex);
+                    });
+                }
+                
+                function nextImage() {
+                    currentIndex = (currentIndex + 1) % images.length;
+                    goToImage(currentIndex);
+                }
+                
+                function prevImage() {
+                    currentIndex = (currentIndex - 1 + images.length) % images.length;
+                    goToImage(currentIndex);
+                }
+                
+                // Set up navigation
+                prevBtn.onclick = prevImage;
+                nextBtn.onclick = nextImage;
+                
+                // Keyboard navigation
+                function handleKeyPress(e) {
+                    if (e.key === 'ArrowLeft') prevImage();
+                    else if (e.key === 'ArrowRight') nextImage();
+                    else if (e.key === 'Escape') closeCarousel();
+                }
+                
+                function closeCarousel() {
+                    modal.style.display = 'none';
+                    document.removeEventListener('keydown', handleKeyPress);
+                }
+                
+                // Show first image
+                goToImage(0);
+                
+                // Show modal
+                showModal(modal);
+                
+                // Add keyboard listeners
+                document.addEventListener('keydown', handleKeyPress);
+                
+                // Close button
+                document.getElementById('product-carousel-close').onclick = closeCarousel;
+            }
+            
             // =========================================================================
             //  3. AUTHENTICATION (Client-side)
             // =========================================================================
@@ -3728,6 +3975,7 @@
                 const userNav = document.getElementById('user-info-nav');
                 const avatarElement = document.getElementById('nav-user-avatar');
                 const postJobBtnJobsPage = document.getElementById('post-new-job-from-jobs-page-btn');
+                const postProductBtnProductsPage = document.getElementById('post-new-product-from-products-page-btn');
 
                 if (currentUser) {
                     guestNav.style.display = 'none';
@@ -3739,25 +3987,40 @@
                     if (postJobBtnJobsPage) {
                         postJobBtnJobsPage.style.display = 'inline-flex';
                     }
+                    if (postProductBtnProductsPage) { // <-- NEW
+                        postProductBtnProductsPage.style.display = 'inline-flex';
+                    }
                 } else {
                     guestNav.style.display = 'flex';
                     userNav.style.display = 'none';
                     if (postJobBtnJobsPage) postJobBtnJobsPage.style.display = 'none';
+                    if (postProductBtnProductsPage) postProductBtnProductsPage.style.display = 'none'; // <-- NEW
                 }
             }
 
-            async function sendVerificationEmail(emailData) {
+            async function sendVerificationEmail(emailData, retryCount = 0) {
+                const maxRetries = 2;
                 try {
-                    await fetch(GOOGLE_SCRIPT_URL, {
+                    console.log('Sending verification email for:', emailData.email, 'Type:', emailData.type || 'unknown', 'Attempt:', retryCount + 1);
+                    const response = await fetch(GOOGLE_SCRIPT_URL, {
                         method: 'POST',
                         mode: 'no-cors',
                         cache: 'no-cache',
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify({ action: 'newUserSignup', ...emailData })
                     });
+                    console.log('Verification email request sent successfully');
+                    // Add a small delay to ensure the request completes
+                    await new Promise(resolve => setTimeout(resolve, 1000));
                 } catch (error) {
-                    console.error("Failed to send verification email via Apps Script:", error);
-                    // This error won't be shown to the user, but it's important for debugging.
+                    console.error(`Failed to send verification email via Apps Script (attempt ${retryCount + 1}):`, error);
+                    if (retryCount < maxRetries) {
+                        console.log(`Retrying email send in 2 seconds...`);
+                        await new Promise(resolve => setTimeout(resolve, 2000));
+                        return sendVerificationEmail(emailData, retryCount + 1);
+                    } else {
+                        showToast('Account created but verification email may not have been sent. Please contact support if you don\'t receive it.', 'warning', 8000);
+                    }
                 }
             }
 
@@ -3847,7 +4110,10 @@
                     }
 
                     if (result.emailData) {
+                        console.log('Sending verification email for user type:', accountType, result.emailData);
                         sendVerificationEmail(result.emailData);
+                    } else {
+                        console.warn('No emailData returned from signup for user type:', accountType);
                     }
 
                     showToast(result.message, 'success', 6000); 
@@ -3952,40 +4218,56 @@
             // =========================================================================
 
             function getInteractionButtonsHTML(itemId, itemType) {
-                // --- MODIFICATION: Top interactions have been moved to the footer for all card types ---
-                if (itemType === 'person' || itemType === 'agency' || itemType === 'employer' || itemType === 'job' || itemType === 'news') {
-                    return '';
+                if (!currentUser) {
+                    const favoriteCount = allLikes.flatMap(l => l.favoritedItems || []).filter(id => id === itemId).length;
+                    const likeCount = allLikes.flatMap(l => l.likedItems || []).filter(id => id === itemId).length;
+                    const dislikeCount = allLikes.flatMap(l => l.dislikedItems || []).filter(id => id === itemId).length;
+
+                    return `
+                        <div class="card-interactions">
+                            <div class="interaction-item" title="Favorites">
+                                <button class="like-btn" data-item-id="${itemId}" data-rating="favorite"><i class="far fa-heart"></i></button>
+                                <span class="count">${favoriteCount >= 2 ? favoriteCount : ''}</span>
+                            </div>
+                                <div class="interaction-item" title="Likes">
+                                <button class="rating-btn" data-item-id="${itemId}" data-rating="like"><i class="fas fa-thumbs-up"></i></button>
+                                <span class="count">${likeCount >= 2 ? likeCount : ''}</span>
+                            </div>
+                            <div class="interaction-item" title="Dislikes">
+                                <button class="rating-btn" data-item-id="${itemId}" data-rating="dislike"><i class="fas fa-thumbs-down"></i></button>
+                                <span class="count">${dislikeCount >= 2 ? dislikeCount : ''}</span>
+                            </div>
+                        </div>
+                    `;
                 }
-                return ''; // Return empty for any other case as well
-            }
-            
-            function getFooterInteractionsHTML(itemId) {
+
+                const userRatings = allLikes.find(l => l.username === currentUser.username);
+                const isFavorited = userRatings?.favoritedItems?.includes(itemId);
+                const isLiked = userRatings?.likedItems?.includes(itemId);
+                const isDisliked = userRatings?.dislikedItems?.includes(itemId);
+
+                const favoriteCount = allLikes.flatMap(l => l.favoritedItems || []).filter(id => id === itemId).length;
                 const likeCount = allLikes.flatMap(l => l.likedItems || []).filter(id => id === itemId).length;
                 const dislikeCount = allLikes.flatMap(l => l.dislikedItems || []).filter(id => id === itemId).length;
-
-                let isLiked = false;
-                let isDisliked = false;
-
-                if (currentUser) {
-                    const userRatings = allLikes.find(l => l.username === currentUser.username);
-                    isLiked = userRatings?.likedItems?.includes(itemId);
-                    isDisliked = userRatings?.dislikedItems?.includes(itemId);
-                }
-
+                
                 return `
-                    <div class="card-footer-interactions">
+                    <div class="card-interactions">
+                        <div class="interaction-item" title="Favorites">
+                            <button class="like-btn ${isFavorited ? 'favorited' : ''}" data-item-id="${itemId}" data-rating="favorite"><i class="${isFavorited ? 'fas' : 'far'} fa-heart"></i></button>
+                            <span class="count">${favoriteCount >= 2 ? favoriteCount : ''}</span>
+                        </div>
                         <div class="interaction-item" title="Likes">
                             <button class="rating-btn ${isLiked ? 'thumb-liked' : ''}" data-item-id="${itemId}" data-rating="like"><i class="fas fa-thumbs-up"></i></button>
-                            ${likeCount > 0 ? `<span class="count">${likeCount}</span>` : ''}
+                            <span class="count">${likeCount >= 2 ? likeCount : ''}</span>
                         </div>
                         <div class="interaction-item" title="Dislikes">
                             <button class="rating-btn ${isDisliked ? 'disliked' : ''}" data-item-id="${itemId}" data-rating="dislike"><i class="fas fa-thumbs-down"></i></button>
-                            ${dislikeCount > 0 ? `<span class="count">${dislikeCount}</span>` : ''}
+                            <span class="count">${dislikeCount >= 2 ? dislikeCount : ''}</span>
                         </div>
-                    </div>
-                `;
+                    </div>`;
             }
 
+            
             function getFollowButtonHTML(username, sizeClass = 'btn-small') {
                 if (!currentUser || currentUser.username === username) {
                     return ''; 
@@ -3997,36 +4279,53 @@
                 return `<button class="jkit-btn ${buttonClass} ${sizeClass} follow-btn" data-username="${username}">${buttonText}</button>`;
             }
             
-            // --- NEW: RATING DISPLAY FUNCTION ---
-            function getRatingStarsHTML(profile) {
-                if (!profile || !profile.ratingCount || profile.ratingCount === 0) {
-                    return '<div class="rating-summary"><span class="rating-count">Not Rated</span></div>';
-                }
-
-                const rating = profile.averageRating || 0;
-                const fullStars = Math.floor(rating);
-                const halfStar = rating % 1 >= 0.5 ? 1 : 0;
-                const emptyStars = 5 - fullStars - halfStar;
-
-                let starsHTML = '';
-                for (let i = 0; i < fullStars; i++) starsHTML += '<i class="fas fa-star"></i>';
-                if (halfStar) starsHTML += '<i class="fas fa-star-half-alt"></i>';
-                for (let i = 0; i < emptyStars; i++) starsHTML += '<i class="far fa-star"></i>';
-                
-                const plural = profile.ratingCount === 1 ? 'rating' : 'ratings';
-
-                return `
-                    <div class="rating-summary">
-                        <div class="stars">${starsHTML}</div>
-                        <span class="rating-count">(${profile.ratingCount} ${plural})</span>
-                    </div>
-                `;
-            }
 
             function renderHomePage() {
                 renderNewsSection();
+                renderOriginalEvents();
+                renderImportantEvents();
                 renderTimelineSection();
             }
+
+            function renderOriginalEvents() {
+                const grid = document.getElementById('original-events-grid');
+                if (!grid) return;
+
+                if (!allOriginalEvents || allOriginalEvents.length === 0) {
+                    grid.innerHTML = '<p style="color: var(--jkit-text-muted); text-align: center;">No original events have been posted yet.</p>';
+                    return;
+                }
+
+                grid.innerHTML = allOriginalEvents
+                    .sort((a, b) => new Date(b.date) - new Date(a.date)) // Sort descending
+                    .map(event => {
+                        const eventDate = new Date(event.date);
+                        const day = eventDate.getDate();
+                        const month = eventDate.toLocaleString('default', { month: 'short' }).toUpperCase();
+                        
+                        const descriptionSnippet = (event.description || '').length > 120 ? (event.description || '').substring(0, 120) + '...' : (event.description || '');
+                        
+                        return `
+                            <div class="event-card">
+                                <div class="card-image-container">
+                                    <img src="${event.imagePath || FALLBACK_EVENT_IMG}" alt="${event.title}" class="event-card-image enlargeable-image" style="cursor: pointer;">
+                                </div>
+                                <div class="event-card-content">
+                                    <div class="event-date">
+                                        <span class="month">${month}</span>
+                                        <span class="day">${day}</span>
+                                    </div>
+                                    <h3>${event.title}</h3>
+                                    <p>${descriptionSnippet}</p>
+                                    <div class="event-card-footer" style="justify-content: flex-end;">
+                                        <button class="jkit-btn jkit-btn-outline view-more-event-btn" data-event-id="${event.originalEventId}" data-is-original="true" style="padding: 6px 14px; font-size: 0.8rem;">View More</button>
+                                    </div>
+                                </div>
+                            </div>
+                        `;
+                }).join('');
+            }
+
 
             function renderTimelineSection() {
                 const container = document.getElementById('timeline-container');
@@ -4062,6 +4361,50 @@
                             </div>
                         `;
                     }).join('');
+            }
+
+            function renderImportantEvents() {
+                const grid = document.getElementById('important-events-grid');
+                if (!grid) return;
+
+                const today = new Date();
+                today.setHours(0, 0, 0, 0);
+
+                const upcomingEvents = allImportantEvents.filter(event => new Date(event.date) >= today);
+
+                if (upcomingEvents.length === 0) {
+                    grid.innerHTML = '<p style="color: var(--jkit-text-muted); text-align: center;">No upcoming events at the moment. Check back soon!</p>';
+                    return;
+                }
+
+                grid.innerHTML = upcomingEvents.map(event => {
+                    const eventDate = new Date(event.date);
+                    const day = eventDate.getDate();
+                    const month = eventDate.toLocaleString('default', { month: 'short' }).toUpperCase();
+                    
+                    const descriptionSnippet = (event.description || '').length > 120 ? (event.description || '').substring(0, 120) + '...' : (event.description || '');
+                    const interactionButtons = getInteractionButtonsHTML(event.eventId, 'event');
+                    
+                    return `
+                        <div class="event-card">
+                            <div class="card-image-container">
+                                ${interactionButtons}
+                                <img src="${event.imagePath || FALLBACK_EVENT_IMG}" alt="${event.title}" class="event-card-image enlargeable-image" style="cursor: pointer;">
+                            </div>
+                            <div class="event-card-content">
+                                <div class="event-date">
+                                    <span class="month">${month}</span>
+                                    <span class="day">${day}</span>
+                                </div>
+                                <h3>${event.title}</h3>
+                                <p>${descriptionSnippet}</p>
+                                <div class="event-card-footer" style="justify-content: flex-end;">
+                                    <button class="jkit-btn jkit-btn-outline view-more-event-btn" data-event-id="${event.eventId}" style="padding: 6px 14px; font-size: 0.8rem;">View More</button>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                }).join('');
             }
             
             function renderJobsPage(filterText = '', filterJobType = '', filterCategory = '', filterSpecificJob = '') {
@@ -4110,10 +4453,168 @@
                         }
                     }
 
-                    card.innerHTML = `<div class="card-image-container">${interactionButtons}<img class="card-main-image" src="" alt="${job.title}"></div><div class="card-content"><div class="card-meta"><span><i class="fas fa-map-marker-alt"></i> ${job.location}</span><span><i class="fas fa-users"></i> Max ${job.maxPeople || 1}</span></div><h3>${job.title}</h3><p>${(job.description || '').substring(0, 80)}...</p><div class="card-meta" style="margin-top: auto; margin-bottom: 0; justify-content: flex-start;">${job.price > 0 ? `<span class="card-price">N$${job.price} ${payRateText}${perPersonText}</span>` : ''}</div></div><div class="card-footer" style="justify-content:flex-end;"><button class="jkit-btn apply-btn" data-job-id="${job.jobId}">Apply for job</button></div>`;
+                    card.innerHTML = `<div class="card-image-container">${interactionButtons}<img class="card-main-image" src="" alt="${job.title}"></div><div class="card-content"><div class="card-meta"><span><i class="fas fa-map-marker-alt"></i> ${job.location}</span><span><i class="fas fa-users"></i> Max ${job.maxPeople || 1}</span></div><h3>${job.title}</h3><p>${(job.description || '').substring(0, 80)}...</p><div class="card-meta" style="margin-top: auto; margin-bottom: 0; justify-content: flex-start;">${job.price > 0 ? `<span class="card-price">N$${job.price} ${payRateText}${perPersonText}</span>` : ''}</div></div><div class="card-footer"><button class="jkit-btn apply-btn" data-job-id="${job.jobId}">Apply for job</button></div>`;
                     grid.appendChild(card);
                     displayImage(card.querySelector('.card-main-image'), imageToDisplay, GLOBAL_FALLBACK_IMAGE);
                 }
+            }
+
+            // --- NEW: Render Products Page ---
+            function renderProductsPage(filterText = '', filterCategory = '') {
+                const grid = document.getElementById('products-grid'); 
+                if (!grid) {
+                    console.log('products-grid not found');
+                    return;
+                }
+                grid.innerHTML = '';
+
+                // Extract all unique categories for the filter dropdown
+                const categorySelect = document.getElementById('product-category-filter');
+                if (categorySelect) {
+                    const uniqueCategories = [...new Set(allProducts.map(p => p.category).filter(Boolean))].sort();
+                    
+                    // Keep the default option, replace the rest
+                    categorySelect.innerHTML = '<option value="">All Categories</option>';
+                    uniqueCategories.forEach(cat => {
+                        const selected = cat === filterCategory ? 'selected' : '';
+                        categorySelect.innerHTML += `<option value="${cat}" ${selected}>${cat}</option>`;
+                    });
+                }
+
+                const filteredProducts = allProducts.filter(product => { 
+                    if (product.status !== 'available') return false;
+                    
+                    const sellerProfile = allProfiles.find(p => p.username === product.postedBy);
+                    const lowerFilterText = filterText.toLowerCase(); 
+
+                    const matchesText = !filterText || 
+                        (product.name && product.name.toLowerCase().includes(lowerFilterText)) || 
+                        (product.description && product.description.toLowerCase().includes(lowerFilterText)) ||
+                        (sellerProfile && sellerProfile.fullName && sellerProfile.fullName.toLowerCase().includes(lowerFilterText));
+                    
+                    const matchesCategory = !filterCategory || product.category === filterCategory; 
+                    return matchesText && matchesCategory; 
+                }).sort((a,b) => new Date(b.createdAt) - new Date(a.createdAt));
+            
+                if (filteredProducts.length === 0) { grid.innerHTML = '<p>No products found matching your criteria.</p>'; return; }
+                
+                for (const product of filteredProducts) {
+                    const sellerProfile = allProfiles.find(p => p.username === product.postedBy);
+                    const sellerName = sellerProfile ? sellerProfile.fullName : product.postedBy;
+                    
+                    const card = document.createElement('div'); 
+                    card.className = 'product-card';
+                    
+                    // Use first image from images array, fallback to old imagePath for backward compatibility
+                    const productImages = product.images && product.images.length > 0 ? product.images : (product.imagePath ? [product.imagePath] : []);
+                    const mainImage = productImages.length > 0 ? productImages[0] : FALLBACK_PRODUCT_IMG;
+
+                    card.innerHTML = `
+                        <div class="card-image-container view-product-btn" data-productid="${product.productId}" data-images="${JSON.stringify(productImages).replace(/"/g, '&quot;')}" style="cursor: pointer;">
+                            <img class="card-main-image enlargeable-image" src="" alt="${product.name}" style="cursor: pointer;">
+                            ${productImages.length > 1 ? '<div class="image-indicator"><i class="fas fa-images"></i> +' + (productImages.length - 1) + '</div>' : ''}
+                        </div>
+                        <div class="card-content">
+                            <div class="card-meta" style="margin-bottom: 0.5rem;">
+                                ${product.category ? `<span><i class="fas fa-tag"></i> ${product.category}</span>` : '<span></span>'}
+                            </div>
+                            <h3>${product.name}</h3>
+                            <p style="font-size: 0.8rem; color: var(--jkit-text-muted); margin-bottom: 0.5rem;">Seller: <strong class="view-profile-btn" data-username="${product.postedBy}" style="cursor: pointer; color: var(--jkit-primary);">${sellerName}</strong></p>
+                            <p>${(product.description || '').substring(0, 80)}...</p>
+                            <div class="card-meta" style="margin-top: auto; margin-bottom: 0; justify-content: flex-start;">
+                                <span class="card-price">N$${product.price}</span>
+                            </div>
+                        </div>
+                        <div class="card-footer">
+                            <button class="jkit-btn view-more-btn" data-productid="${product.productId}"><i class="fas fa-eye"></i> View More</button>
+                            <button class="jkit-btn jkit-btn-outline send-message-btn" data-username="${product.postedBy}"><i class="fas fa-paper-plane"></i> Contact Seller</button>
+                        </div>
+                    `;
+                    grid.appendChild(card);
+                    displayImage(card.querySelector('.card-main-image'), mainImage, FALLBACK_PRODUCT_IMG);
+                }
+            }
+            
+            // NEW: Render Product Detail Page
+            function renderProductDetailPage(productId) {
+                const product = allProducts.find(p => p.productId === productId);
+                const detailContent = document.getElementById('product-detail-content');
+                
+                if (!product) {
+                    detailContent.innerHTML = '<p>Product not found.</p>';
+                    return;
+                }
+                
+                const sellerProfile = allProfiles.find(p => p.username === product.postedBy);
+                const sellerName = sellerProfile ? sellerProfile.fullName : product.postedBy;
+                const sellerAvatar = sellerProfile ? (sellerProfile.profilePicture || '/jkitlogo.png') : '/jkitlogo.png';
+                
+                // Handle multiple images - ensure all are loaded
+                const productImages = product.images && product.images.length > 0 ? product.images : (product.imagePath ? [product.imagePath] : []);
+                const mainImage = productImages.length > 0 ? productImages[0] : FALLBACK_PRODUCT_IMG;
+                
+                const statusClass = product.status === 'available' ? 'available' : 'sold';
+                const statusText = product.status === 'available' ? 'Available' : 'Sold';
+                
+                // Create image gallery HTML
+                const imageGalleryHTML = productImages.length > 1 ? `
+                    <div class="product-gallery-grid">
+                        ${productImages.map((img, index) => `
+                            <div class="product-gallery-thumbnail ${index === 0 ? 'active' : ''}" 
+                                 data-product-id="${productId}"
+                                 data-image-index="${index}"
+                                 data-image-path="${img}">
+                                <img src="" alt="${product.name} - Image ${index + 1}" style="width: 100%; height: 100%; object-fit: cover;">
+                            </div>
+                        `).join('')}
+                    </div>
+                ` : '';
+                
+                detailContent.innerHTML = `
+                    <div class="product-detail-container">
+                        <div class="product-detail-grid">
+                            <div class="product-images-section">
+                                <div class="product-main-image-container" onclick="openProductCarousel(${JSON.stringify(productImages).replace(/"/g, '&quot;')}, 0)" title="Click to open carousel">
+                                    <img id="product-detail-image" src="" alt="${product.name}" style="width: 100%; height: 100%; object-fit: cover;">
+                                </div>
+                                ${imageGalleryHTML}
+                            </div>
+                            <div class="product-info-section">
+                                <div class="product-header">
+                                    <span class="product-status ${statusClass}">${statusText}</span>
+                                    ${product.category ? `<span class="product-category"><i class="fas fa-tag"></i> ${product.category}</span>` : ''}
+                                </div>
+                                <h1 class="product-title">${product.name}</h1>
+                                <div class="product-price">N$${product.price.toLocaleString()}</div>
+                                
+                                <div class="product-description-section">
+                                    <h3>About this product</h3>
+                                    <p>${product.description || 'No description provided.'}</p>
+                                </div>
+                                
+                                <div class="product-seller-section">
+                                    <h3><img src="${sellerAvatar}" alt="${sellerName}"> Seller Information</h3>
+                                    <p><strong>${sellerName}</strong></p>
+                                    <p>@${product.postedBy}</p>
+                                    <button class="jkit-btn send-message-btn" data-username="${product.postedBy}"><i class="fas fa-paper-plane"></i> Contact Seller</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                
+                // Display the main product image
+                const detailImage = document.getElementById('product-detail-image');
+                displayImage(detailImage, mainImage, FALLBACK_PRODUCT_IMG);
+                
+                // Display gallery images
+                const galleryThumbnails = detailContent.querySelectorAll('.product-gallery-thumbnail img');
+                galleryThumbnails.forEach((img, index) => {
+                    const imagePath = productImages[index];
+                    if (imagePath) {
+                        displayImage(img, imagePath, FALLBACK_PRODUCT_IMG);
+                    }
+                });
             }
             
             function renderPeoplePage(filterText = '', filterType = 'all', filterWorkerCategory = '', filterTalentCategory = '', filterSpecificSkill = '') {
@@ -4184,32 +4685,18 @@
                     }
                     
                     let locationIconHTML = '';
-                    // --- MODIFICATION: Show location button for any profile with a location, not just verified agency members
-                    if (profile.location) {
-                        locationIconHTML = `<button class="jkit-btn btn-small view-location-btn" data-location="${profile.location}" data-agency-name="${profile.fullName}" title="View Location"><i class="fas fa-map-marker-alt"></i></button>`;
+                    if (profile.isVerified && agencyMembership && agencyMembership.location) {
+                        locationIconHTML = `<button class="jkit-btn btn-small view-location-btn" data-location="${agencyMembership.location}" data-agency-name="${agencyMembership.name}" title="View Location"><i class="fas fa-map-marker-alt"></i></button>`;
                     }
                     
                     const interactionButtons = getInteractionButtonsHTML(profile.username, 'person');
-                    const footerInteractions = getFooterInteractionsHTML(profile.username);
                     const followButton = getFollowButtonHTML(profile.username);
-                    
-                    // --- NEW HIRE BUTTON LOGIC ---
-                    let hireButtonHTML = '';
-                    if (!profile.services || Object.keys(profile.services).length === 0) {
-                         if (currentUser) {
-                            hireButtonHTML = `<button class="jkit-btn hire-btn" data-username="${profile.username}">Hire</button>`;
-                        }
-                    }
-                    
                     const card = document.createElement('div');
                     card.className = 'person-card';
 
                     let imageToDisplay = profile.avatarPath || DEFAULT_PERSON_AVATAR;
                     
                     const verifiedBadge = profile.isVerified ? '<span class="verified-badge" title="Verified"><i class="fas fa-check"></i></span>' : '';
-                    
-                    // --- NEW RATING DISPLAY ---
-                    const ratingHTML = getRatingStarsHTML(profile);
 
                     let socialLinksHTML = '<div class="card-social-links" style="display: flex; gap: 0.75rem;">';
                     if (profile.linkedin) { socialLinksHTML += `<a href="${profile.linkedin}" target="_blank" title="LinkedIn"><i class="fab fa-linkedin"></i></a>`; }
@@ -4223,21 +4710,16 @@
                     card.innerHTML = `<div class="card-image-container view-profile-btn" data-username="${profile.username}" style="cursor: pointer;">${interactionButtons}<img class="card-main-image" src="" alt="${profile.fullName}"></div>
                     <div class="card-content">
                         <h3>${profile.fullName}${verifiedBadge}</h3>
-                        ${ratingHTML}
                         ${agencyInfoHTML}
                         <div class="card-tags">${(profile.skills || []).slice(0, 3).map(skill => `<span class="card-tag">${skill}</span>`).join('')}</div>
                         <p>${(profile.bio || '').substring(0, 90)}...</p>
                     </div>
                     <div class="card-footer">
-                        <div>
-                            <button class="jkit-btn jkit-btn-outline view-profile-btn" data-username="${profile.username}">Profile</button>
-                            ${followButton}
-                            ${hireButtonHTML}
-                            ${socialLinksHTML}
-                            <button class="jkit-btn btn-small send-message-btn" data-username="${profile.username}"><i class="fas fa-paper-plane"></i></button>
-                            ${locationIconHTML}
-                        </div>
-                        ${footerInteractions}
+                        <button class="jkit-btn jkit-btn-outline view-profile-btn" data-username="${profile.username}">Profile</button>
+                        ${followButton}
+                        ${socialLinksHTML}
+                        <button class="jkit-btn btn-small send-message-btn" data-username="${profile.username}"><i class="fas fa-paper-plane"></i></button>
+                        ${locationIconHTML}
                     </div>`;
                     grid.appendChild(card);
                     displayImage(card.querySelector('.card-main-image'), imageToDisplay, DEFAULT_PERSON_AVATAR);
@@ -4248,19 +4730,24 @@
                 const grid = document.getElementById('employers-grid');
                 grid.innerHTML = '';
 
+                // Filter users who are specifically type 'Employer'
                 const employerUsers = allUsers.filter(u => u.type === 'Employer');
                 
                 let filteredEmployers = allProfiles.filter(profile => {
                     const user = employerUsers.find(u => u.username === profile.username);
-                    if (!user) return false; 
+                    if (!user) return false; // Profile must belong to an employer
 
                     const lowerFilterText = filterText.toLowerCase();
                     
+                    // 1. Filter by J-KIT ID
                     if (/^\d{8}$/.test(filterText) || filterText.toUpperCase().includes('JIN')) {
                         return user.jkitId && user.jkitId.toLowerCase().includes(lowerFilterText);
                     }
 
+                    // 2. Filter by Name
                     const textMatch = !filterText || profile.fullName.toLowerCase().includes(lowerFilterText);
+                    
+                    // 3. Filter by Business Type (Formal/Informal)
                     const typeMatch = !filterBusinessType || (user.businessType && user.businessType === filterBusinessType);
 
                     return textMatch && typeMatch;
@@ -4273,17 +4760,18 @@
 
                 for (const profile of filteredEmployers) {
                     const user = allUsers.find(u => u.username === profile.username);
-                    const interactionButtons = getInteractionButtonsHTML(profile.username, 'employer');
-                    const footerInteractions = getFooterInteractionsHTML(profile.username);
+                    const interactionButtons = getInteractionButtonsHTML(profile.username, 'person');
                     const followButton = getFollowButtonHTML(profile.username);
                     
                     const card = document.createElement('div');
+                    // STRICT STYLING: Use 'person-card' class to match People page style
                     card.className = 'person-card';
 
                     let imageToDisplay = profile.avatarPath || DEFAULT_PERSON_AVATAR;
                     const verifiedBadge = profile.isVerified ? '<span class="verified-badge" title="Verified"><i class="fas fa-check"></i></span>' : '';
                     const businessTypeLabel = user.businessType ? (user.businessType.charAt(0).toUpperCase() + user.businessType.slice(1)) : 'Employer';
 
+                    // Social Links Logic (Same as People Page)
                     let socialLinksHTML = '<div class="card-social-links" style="display: flex; gap: 0.75rem;">';
                     if (profile.linkedin) { socialLinksHTML += `<a href="${profile.linkedin}" target="_blank" title="LinkedIn"><i class="fab fa-linkedin"></i></a>`; }
                     if (profile.facebook) { socialLinksHTML += `<a href="${profile.facebook}" target="_blank" title="Facebook"><i class="fab fa-facebook-f"></i></a>`; }
@@ -4305,13 +4793,10 @@
                         <p>${(profile.bio || '').substring(0, 90)}...</p>
                     </div>
                     <div class="card-footer">
-                        <div>
-                            <button class="jkit-btn jkit-btn-outline view-profile-btn" data-username="${profile.username}">Profile</button>
-                            ${followButton}
-                            ${socialLinksHTML}
-                            <button class="jkit-btn btn-small send-message-btn" data-username="${profile.username}"><i class="fas fa-paper-plane"></i></button>
-                        </div>
-                         ${footerInteractions}
+                        <button class="jkit-btn jkit-btn-outline view-profile-btn" data-username="${profile.username}">Profile</button>
+                        ${followButton}
+                        ${socialLinksHTML}
+                        <button class="jkit-btn btn-small send-message-btn" data-username="${profile.username}"><i class="fas fa-paper-plane"></i></button>
                     </div>`;
                     
                     grid.appendChild(card);
@@ -4348,7 +4833,6 @@
                         messageBtnHTML = `<button class="jkit-btn btn-small send-message-btn" data-username="${agency.owner}"><i class="fas fa-paper-plane"></i> Message Agent</button>`;
                     }
                     const interactionButtons = getInteractionButtonsHTML(agency.agencyId, 'agency');
-                    const footerInteractions = getFooterInteractionsHTML(agency.agencyId);
                     
                     let actionButtonsHTML = `<button class="jkit-btn jkit-btn-outline view-agency-btn" data-agency-id="${agency.agencyId}">View Details</button>`;
 
@@ -4362,13 +4846,6 @@
                             actionButtonsHTML += `<button class="jkit-btn" disabled>Pending</button>`;
                         } else {
                             actionButtonsHTML += `<button class="jkit-btn request-join-btn" data-agency-id="${agency.agencyId}">Request to Join</button>`;
-                        }
-                    }
-
-                     // --- NEW HIRE BUTTON LOGIC ---
-                    if (!agency.services || Object.keys(agency.services).length === 0) {
-                         if (currentUser) {
-                            actionButtonsHTML += `<button class="jkit-btn hire-btn" data-username="${agency.owner}">Hire Agent</button>`;
                         }
                     }
 
@@ -4391,12 +4868,7 @@
                     const card = document.createElement('div'); card.className = 'agency-card';
                     card.innerHTML = `<div class="card-image-container">${interactionButtons}<img class="card-main-image" src="" alt="${agency.name}"></div>
                     <div class="card-content"><h3>${agency.name}${verifiedBadge}</h3><div class="card-tags"><span class="card-tag">${agency.type || 'Agency'}</span></div><p>Managed by: <strong>${ownerProfile.fullName}</strong></p><p>${agency.description.substring(0, 100)}...</p></div>
-                    <div class="card-footer">
-                        <div>
-                           ${actionButtonsHTML} ${messageBtnHTML} ${socialLinksHTML}
-                        </div>
-                         ${footerInteractions}
-                    </div>`;
+                    <div class="card-footer">${actionButtonsHTML} ${messageBtnHTML} ${socialLinksHTML}</div>`;
                     grid.appendChild(card);
                     displayImage(card.querySelector('.card-main-image'), imageToDisplay, DEFAULT_AGENCY_AVATAR);
                 }
@@ -4423,10 +4895,9 @@
                     const snippet = article.content.length > 100 ? article.content.substring(0, 100) + '...' : article.content;
                     const publishedDate = new Date(article.createdAt).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
                     const interactionButtons = getInteractionButtonsHTML(article.articleId, 'news');
-                    const footerInteractions = getFooterInteractionsHTML(article.articleId);
                     return `
                         <div class="news-card">
-                            <div class="news-card-image">
+                                <div class="news-card-image">
                                 ${interactionButtons}
                                 <img src="${article.imagePath}" alt="${article.title}" class="enlargeable-image" style="cursor: pointer;">
                             </div>
@@ -4434,11 +4905,8 @@
                                 <h3>${article.title}</h3>
                                 <p>${snippet}</p>
                                 <div class="card-footer" style="padding:0; border:0; justify-content: space-between;">
-                                    <div style="display: flex; align-items: center; gap: 0.75rem;">
-                                        <span class="news-card-meta">${publishedDate}</span>
-                                        <button class="jkit-btn jkit-btn-outline read-more-btn" data-article-id="${article.articleId}">Read More</button>
-                                    </div>
-                                    ${footerInteractions}
+                                    <span class="news-card-meta">${publishedDate}</span>
+                                    <button class="jkit-btn jkit-btn-outline read-more-btn" data-article-id="${article.articleId}">Read More</button>
                                 </div>
                             </div>
                         </div>`;
@@ -4479,12 +4947,6 @@
                         actionsHTML += `<button class="jkit-btn" disabled>Request Pending</button>`;
                     } else {
                         actionsHTML += `<button class="jkit-btn request-join-btn" data-agency-id="${agency.agencyId}">Request to Join</button>`;
-                    }
-                }
-                 // --- NEW HIRE BUTTON LOGIC ---
-                if (!agency.services || Object.keys(agency.services).length === 0) {
-                     if (currentUser) {
-                        actionsHTML += `<button class="jkit-btn hire-btn" data-username="${agency.owner}">Hire Agent</button>`;
                     }
                 }
                 document.querySelector('.agency-sidebar-actions').innerHTML = actionsHTML;
@@ -4559,10 +5021,6 @@
 
                 displayImage(document.getElementById('profile-detail-avatar'), profile.avatarPath, DEFAULT_PERSON_AVATAR);
                 document.getElementById('profile-detail-name').innerHTML = `${profile.fullName || "Unnamed User"}${verifiedBadge}`;
-                
-                // --- NEW RATING DISPLAY ---
-                document.getElementById('profile-detail-rating-summary').innerHTML = getRatingStarsHTML(profile);
-                
                 document.getElementById('profile-status-badge').textContent = user.type || "N/A";
 
                 const phoneLink = document.getElementById('profile-detail-phone');
@@ -4660,12 +5118,7 @@
 
                 const actionButtons = document.querySelector('.profile-action-buttons');
                 actionButtons.innerHTML = '';
-                 // --- NEW HIRE BUTTON LOGIC ---
-                const hasServices = servicesToDisplay && typeof servicesToDisplay === 'object' && Object.keys(servicesToDisplay).length > 0;
-                if (!hasServices && currentUser) {
-                    actionButtons.innerHTML += `<button class="jkit-btn hire-btn" data-username="${username}">Hire Now</button>`;
-                }
-
+                
                 if (profile.isVerified && agencyMembership && agencyMembership.location) {
                     actionButtons.innerHTML += `<button class="jkit-btn view-location-btn" data-location="${agencyMembership.location}" data-agency-name="${agencyMembership.name}"><i class="fas fa-map-marker-alt"></i> View Location</button>`;
                 }
@@ -4847,10 +5300,6 @@
                 `;
             }
 
-            // --- NEW: Map variables in a higher scope ---
-            let dashboardMap;
-            let dashboardMarker;
-
             function renderDashboardPage() {
                 const container = document.getElementById('dashboard-container');
                 if (!currentUser) { container.innerHTML = `<h2>Dashboard</h2><p>Please <a href="#" id="dashboard-login-link">log in</a> to manage your content.</p>`; document.getElementById('dashboard-login-link').addEventListener('click', (e) => { e.preventDefault(); showModal(loginModal); }); return; }
@@ -4912,22 +5361,6 @@
                         <div class="form-group"><label for="profile-instagram">Instagram URL</label><input type="url" id="profile-instagram" value="${profile.instagram || ''}" placeholder="https://instagram.com/yourprofile"></div>
                         <div class="form-group"><label for="profile-x_twitter">X (Twitter) URL</label><input type="url" id="profile-x_twitter" value="${profile.x_twitter || ''}" placeholder="https://x.com/yourprofile"></div>
                         <div class="form-group"><label for="profile-tiktok">TikTok URL</label><input type="url" id="profile-tiktok" value="${profile.tiktok || ''}" placeholder="https://tiktok.com/@yourprofile"></div>
-                        
-                        <hr style="margin: 1.5rem 0;">
-                        <h4>My Location</h4>
-                        <p style="font-size: 0.9rem; color: var(--jkit-text-muted); margin-bottom: 1rem;">Set your primary work location. This helps clients find you.</p>
-                        <div class="form-group">
-                            <label for="profile-location">Location Address</label>
-                            <input type="text" id="profile-location" value="${profile.location || ''}" placeholder="e.g., 123 Independence Ave, Windhoek">
-                        </div>
-                        <div id="dashboard-map-container"></div>
-                        <div id="geolocation-controls">
-                            <button type="button" class="jkit-btn jkit-btn-outline" id="find-my-location-btn" style="padding: 6px 14px; font-size: 0.8rem;">
-                                <i class="fas fa-crosshairs"></i> Find My Location
-                            </button>
-                            <span id="geolocation-info"></span>
-                        </div>
-                        
                         <h4 style="margin-top: 1.5rem;">My Gallery (up to 5 images)</h4>
                         ${galleryCarouselHTML}
                         <hr style="margin: 1.5rem 0;">
@@ -4940,6 +5373,7 @@
                 navHTML += `<li><button data-panel="following-panel"><i class="fas fa-heart"></i> Following</button></li>`;
                 
                 if (currentUser) {
+                    // Jobs Management (for everyone)
                     navHTML += `<li><button data-panel="jobs-panel"><i class="fas fa-briefcase"></i> My Jobs</button></li>`;
                     const myJobs = allJobs.filter(job => job.postedBy === currentUser.username);
                     let myJobsListHTML = myJobs.length > 0 ? myJobs.map(job => {
@@ -4966,16 +5400,6 @@
                             });
                             applicantsHTML += '</div></div>';
                         }
-                        
-                        // --- NEW: RATING BUTTON LOGIC ---
-                        let rateButtonHTML = '';
-                        if (job.status === 'closed' && job.assignedTo && currentUser.username === job.postedBy) {
-                            const hasRated = allRatings.some(r => r.jobId === job.jobId && r.raterUsername === currentUser.username);
-                            if (!hasRated) {
-                                rateButtonHTML = `<button class="jkit-btn rate-job-btn" data-job-id="${job.jobId}" data-worker-username="${job.assignedTo}" style="padding: 5px 10px; font-size: 0.8rem; margin-left: 10px;">Rate Worker</button>`;
-                            }
-                        }
-
                         return `<li>
                         <img src="${job.imagePath || GLOBAL_FALLBACK_IMAGE}" alt="${job.title}" class="job-list-image">
                         <span class="job-list-title">${job.title}</span>
@@ -4984,13 +5408,37 @@
                             ${job.status === 'open' || job.status === 'assigned' || job.status === 'in-progress' ? `<button class="close-btn" data-job-id="${job.jobId}" title="Close Job"><i class="fas fa-check-circle"></i></button>` : ''}
                             <button class="edit-btn" data-job-id="${job.jobId}" title="Edit Job"><i class="fas fa-edit"></i></button>
                             <button class="delete-btn" data-job-id="${job.jobId}" title="Delete Job"><i class="fas fa-trash"></i></button>
-                            ${rateButtonHTML}
                         </div>
                         ${applicantsHTML}
                         </li>`;
                     }).join('') : '<li><p>You have not posted any jobs yet.</p></li>';
 
                     panelsHTML += `<div id="jobs-panel" class="dashboard-panel"><h3>Manage My Jobs</h3><button class="jkit-btn" id="dashboard-post-job-btn">+ Post New Job</button><ul class="my-jobs-list">${myJobsListHTML}</ul></div>`;
+
+                    // NEW: Products Management (for everyone)
+                    navHTML += `<li><button data-panel="products-panel"><i class="fas fa-box"></i> My Products</button></li>`;
+                    const myProducts = allProducts.filter(product => product.postedBy === currentUser.username);
+                    let myProductsListHTML = myProducts.length > 0 ? myProducts.map(product => {
+                        return `<li>
+                        <img src="${product.imagePath || FALLBACK_PRODUCT_IMG}" alt="${product.name}" class="product-list-image">
+                        <div style="display: flex; flex-direction: column; flex-grow: 1;">
+                            <span class="product-list-title">${product.name}</span>
+                            <span style="font-size: 0.8rem; color: var(--jkit-text-muted);">N$${product.price}</span>
+                        </div>
+                        <span class="product-status ${product.status}">${product.status}</span>
+                        <div class="product-actions">
+                            ${product.status === 'available' ? `<button class="mark-sold-btn jkit-btn jkit-btn-outline" data-product-id="${product.productId}" style="padding: 4px 10px; font-size: 0.75rem;">Mark Sold</button>` : `<button class="mark-available-btn jkit-btn jkit-btn-outline" data-product-id="${product.productId}" style="padding: 4px 10px; font-size: 0.75rem;">Mark Available</button>`}
+                            <button class="edit-btn user-product-edit-btn" data-product-id="${product.productId}" title="Edit Product"><i class="fas fa-edit"></i></button>
+                            <button class="delete-btn user-product-delete-btn" data-product-id="${product.productId}" title="Delete Product"><i class="fas fa-trash"></i></button>
+                        </div>
+                        </li>`;
+                    }).join('') : '<li><p>You have not listed any products yet.</p></li>';
+
+                    panelsHTML += `<div id="products-panel" class="dashboard-panel">
+                        <h3>Manage My Products</h3>
+                        <button class="jkit-btn" id="dashboard-post-product-btn">+ Add New Product</button>
+                        <ul class="my-products-list">${myProductsListHTML}</ul>
+                    </div>`;
                 }
 
                 if (currentUser.type === 'Worker' || currentUser.type === 'Talent') {
@@ -5086,6 +5534,21 @@
                         </div>
                     </li>`).join('') : '<li><p>You are not following any agencies yet.</p></li>';
                 
+                if (currentUser && profile && profile.isVerified) {
+                    navHTML += `<li><button data-panel="my-events-panel"><i class="fas fa-calendar-plus"></i> My Events</button></li>`;
+                    
+                    const myEvents = allImportantEvents.filter(event => event.postedBy === currentUser.username);
+                    let myEventsListHTML = myEvents.length > 0 ? myEvents.map(event => `<li>
+                        <img src="${event.imagePath}" alt="${event.title}" class="event-list-image">
+                        <span class="event-list-title">${event.title}</span>
+                        <div class="event-actions">
+                            <button class="edit-btn user-event-edit-btn" data-event-id="${event.eventId}" title="Edit Event"><i class="fas fa-edit"></i></button>
+                            <button class="delete-btn user-event-delete-btn" data-event-id="${event.eventId}" title="Delete Event"><i class="fas fa-trash"></i></button>
+                        </div></li>`).join('') : '<li><p>You have not created any events yet.</p></li>';
+
+                    panelsHTML += `<div id="my-events-panel" class="dashboard-panel"><h3>Manage My Events</h3><button class="jkit-btn" id="dashboard-create-my-event-btn">+ Create New Event</button><ul class="my-events-list">${myEventsListHTML}</ul></div>`;
+                }
+
                 panelsHTML += `<div id="following-panel" class="dashboard-panel">
                     <h3>People I Follow</h3>
                     <ul class="my-jobs-list">${followedPeopleHTML}</ul>
@@ -5115,11 +5578,12 @@
                     </div>
                 </div>`;
 
-                navHTML += `<li><button data-panel="news-panel"><i class="fas fa-newspaper"></i> Manage News</button></li>`;
-
                 if (currentUser && currentUser.isAdmin) {
                     navHTML += `<li><button data-panel="admin-jobs-panel"><i class="fas fa-hammer"></i> Job Management</button></li>`; 
                     navHTML += `<li><button data-panel="about-content-panel"><i class="fas fa-info-circle"></i> Manage About Page</button></li>`; 
+                    navHTML += `<li><button data-panel="events-panel"><i class="fas fa-calendar-alt"></i> Manage Events</button></li>`;
+                    navHTML += `<li><button data-panel="original-events-panel"><i class="fas fa-star"></i> Manage Original Events</button></li>`;
+                    navHTML += `<li><button data-panel="news-panel"><i class="fas fa-newspaper"></i> Manage News</button></li>`;
                     navHTML += `<li><button data-panel="job-categories-panel"><i class="fas fa-sitemap"></i> Manage Job Categories</button></li>`;
                     navHTML += `<li><button data-panel="default-images-panel"><i class="fas fa-image"></i> Default Images</button></li>`;
                     navHTML += `<li><button data-panel="manage-timeline-panel"><i class="fas fa-stream"></i> Manage Timeline</button></li>`;
@@ -5235,6 +5699,42 @@
 
                     panelsHTML += `<div id="job-categories-panel" class="dashboard-panel"></div>`;
                     panelsHTML += `<div id="about-content-panel" class="dashboard-panel"></div>`;
+
+                    let eventsListHTML = allImportantEvents.length > 0 ? allImportantEvents.map(event => `<li>
+                        <img src="${event.imagePath}" alt="${event.title}" class="event-list-image">
+                        <span class="event-list-title">${event.title}</span>
+                        <div class="event-actions">
+                            <button class="edit-btn" data-event-id="${event.eventId}" title="Edit Event"><i class="fas fa-edit"></i></button>
+                            <button class="delete-btn" data-event-id="${event.eventId}" title="Delete Event"><i class="fas fa-trash"></i></button>
+                        </div></li>`).join('') : '<li><p>No events have been created yet.</p></li>';
+                    panelsHTML += `<div id="events-panel" class="dashboard-panel"><h3>Manage Important Events</h3><button class="jkit-btn" id="dashboard-create-event-btn">+ Create New Event</button><ul class="my-events-list">${eventsListHTML}</ul></div>`;
+                    
+                    let originalEventsListHTML = allOriginalEvents.length > 0 ? allOriginalEvents.map(event => `
+                        <li class="my-events-list">
+                            <img src="${event.imagePath}" alt="${event.title}" class="event-list-image">
+                            <span class="event-list-title">${event.title}</span>
+                            <div class="event-actions">
+                                <button class="edit-btn edit-original-event-btn" data-event-id="${event.originalEventId}" title="Edit Original Event"><i class="fas fa-edit"></i></button>
+                                <button class="delete-btn delete-original-event-btn" data-event-id="${event.originalEventId}" title="Delete Original Event"><i class="fas fa-trash"></i></button>
+                            </div>
+                        </li>`).join('') : '<li><p>No original events have been created yet.</p></li>';
+                    panelsHTML += `<div id="original-events-panel" class="dashboard-panel">
+                        <h3>Manage Original Events</h3>
+                        <button class="jkit-btn" id="dashboard-create-original-event-btn">+ Create New Original Event</button>
+                        <ul class="my-events-list">${originalEventsListHTML}</ul>
+                    </div>`;
+
+                    let newsListHTML = allNewsArticles.length > 0 ? allNewsArticles.map(article => `
+                        <li class="my-news-list">
+                            <img src="${article.imagePath}" alt="${article.title}" class="news-list-image">
+                            <span class="news-list-title">${article.title}</span>
+                            <div class="news-actions">
+                                <button class="edit-btn" data-article-id="${article.articleId}" title="Edit Article"><i class="fas fa-edit"></i></button>
+                                <button class="delete-btn" data-article-id="${article.articleId}" title="Delete Article"><i class="fas fa-trash"></i></button>
+                            </div>
+                        </li>`).join('') : '<li><p>No news articles have been created yet.</p></li>';
+
+                    panelsHTML += `<div id="news-panel" class="dashboard-panel"><h3>Manage News</h3><button class="jkit-btn" id="dashboard-create-news-btn">+ Create New Article</button><ul class="my-news-list">${newsListHTML}</ul></div>`;
 
                     let timelineEventsListHTML = allTimelineEvents.length > 0 ? allTimelineEvents.map(event => `
                         <li class="my-events-list">
@@ -5378,18 +5878,6 @@
                     </div>`;
                 }
 
-                // News panel - available to all users
-                let newsListHTML = allNewsArticles.length > 0 ? allNewsArticles.map(article => `
-                    <li class="my-news-list">
-                        <img src="${article.imagePath}" alt="${article.title}" class="news-list-image">
-                        <span class="news-list-title">${article.title}</span>
-                        <div class="news-actions">
-                            <button class="edit-btn" data-article-id="${article.articleId}" title="Edit Article"><i class="fas fa-edit"></i></button>
-                            <button class="delete-btn" data-article-id="${article.articleId}" title="Delete Article"><i class="fas fa-trash"></i></button>
-                        </div>
-                    </li>`).join('') : '<li><p>No news articles have been created yet.</p></li>';
-
-                panelsHTML += `<div id="news-panel" class="dashboard-panel"><h3>Manage News</h3><button class="jkit-btn" id="dashboard-create-news-btn">+ Create New Article</button><ul class="my-news-list">${newsListHTML}</ul></div>`;
 
                 container.innerHTML = `<h2>Welcome, ${profile.fullName}</h2><div class="dashboard-grid"><nav class="dashboard-nav"><ul>${navHTML}</ul></nav><div class="dashboard-content">${panelsHTML}</div></div>`;
                 
@@ -5437,11 +5925,6 @@
 
                 renderDashboardNotifications();
                 bindDashboardEvents();
-
-                // --- NEW: Initialize map after HTML is rendered ---
-                if (document.getElementById(lastActiveTab) === document.getElementById('profile-panel')) {
-                    initDashboardMap(profile.location);
-                }
                 
                 // Initialize admin table scroll buttons
                 initAdminTableScrollButtons();
@@ -5450,104 +5933,6 @@
                 if (currentUser && currentUser.isAdmin) {
                     initAdminUserManagement();
                 }
-            }
-
-            // --- NEW: Leaflet Map initialization and handling ---
-            async function initDashboardMap(initialLocation) {
-                const mapContainer = document.getElementById('dashboard-map-container');
-                const locationInput = document.getElementById('profile-location');
-                if (!mapContainer || !locationInput) return;
-
-                // If a map instance exists, remove it before re-initializing
-                if (dashboardMap) {
-                    dashboardMap.remove();
-                    dashboardMap = null;
-                }
-
-                dashboardMap = L.map(mapContainer);
-                L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-                    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-                }).addTo(dashboardMap);
-
-                let initialLatLng = [-22.5594, 17.0832]; // Default to Windhoek
-                let initialZoom = 10;
-
-                const setMarkerAndPan = (lat, lon, zoom) => {
-                    if (dashboardMarker) {
-                        dashboardMarker.setLatLng([lat, lon]);
-                    } else {
-                        dashboardMarker = L.marker([lat, lon], { draggable: true }).addTo(dashboardMap);
-                        dashboardMarker.on('dragend', async (event) => {
-                            const { lat, lng } = event.target.getLatLng();
-                            // Reverse geocode
-                            const response = await fetch(`https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lng}&format=json`);
-                            const data = await response.json();
-                            if (data && data.display_name) {
-                                locationInput.value = data.display_name;
-                            }
-                        });
-                    }
-                    dashboardMap.setView([lat, lon], zoom);
-                };
-
-                if (initialLocation) {
-                    try {
-                        const response = await fetch(`https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(initialLocation)}&format=json&limit=1`);
-                        const data = await response.json();
-                        if (data && data.length > 0) {
-                            initialLatLng = [parseFloat(data[0].lat), parseFloat(data[0].lon)];
-                            initialZoom = 14;
-                        }
-                    } catch (e) { console.error("Geocoding failed:", e); }
-                }
-                
-                setMarkerAndPan(initialLatLng[0], initialLatLng[1], initialZoom);
-
-                dashboardMap.on('click', async (e) => {
-                    const { lat, lng } = e.latlng;
-                    setMarkerAndPan(lat, lng, dashboardMap.getZoom());
-                    const response = await fetch(`https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lng}&format=json`);
-                    const data = await response.json();
-                    if (data && data.display_name) {
-                        locationInput.value = data.display_name;
-                    }
-                });
-
-                locationInput.addEventListener('change', async () => {
-                    const address = locationInput.value;
-                    if (address) {
-                        try {
-                            const response = await fetch(`https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(address)}&format=json&limit=1`);
-                            const data = await response.json();
-                            if (data && data.length > 0) {
-                                setMarkerAndPan(parseFloat(data[0].lat), parseFloat(data[0].lon), 14);
-                            }
-                        } catch(e) { console.error("Geocoding on input change failed:", e); }
-                    }
-                });
-
-                document.getElementById('find-my-location-btn').addEventListener('click', () => {
-                    const geoInfo = document.getElementById('geolocation-info');
-                    if (navigator.geolocation) {
-                        geoInfo.textContent = 'Finding your location...';
-                        navigator.geolocation.getCurrentPosition(async (position) => {
-                            const { latitude, longitude } = position.coords;
-                            setMarkerAndPan(latitude, longitude, 15);
-                            const response = await fetch(`https://nominatim.openstreetmap.org/reverse?lat=${latitude}&lon=${longitude}&format=json`);
-                            const data = await response.json();
-                            if (data && data.display_name) {
-                                locationInput.value = data.display_name;
-                                geoInfo.textContent = 'Location found!';
-                            } else {
-                                geoInfo.textContent = 'Could not determine address.';
-                            }
-                        }, () => {
-                            geoInfo.textContent = 'Geolocation is not supported or was denied.';
-                        });
-                    } else {
-                        geoInfo.textContent = 'Geolocation is not supported by your browser.';
-                    }
-                });
             }
             
             function initAdminTableScrollButtons() {
@@ -5869,17 +6254,7 @@
                         dashboardNav.querySelector('.active')?.classList.remove('active'); 
                         button.classList.add('active'); 
                         document.querySelectorAll('.dashboard-panel').forEach(p => p.classList.remove('active')); 
-                        const targetPanel = document.getElementById(panelId);
-                        if (targetPanel) {
-                            targetPanel.classList.add('active');
-                             // --- NEW: Re-initialize map if profile tab is selected ---
-                            if (panelId === 'profile-panel' && currentUser) {
-                                const profile = allProfiles.find(p => p.username === currentUser.username);
-                                if (profile) {
-                                    initDashboardMap(profile.location);
-                                }
-                            }
-                        }
+                        document.getElementById(panelId)?.classList.add('active');
                         if (currentUser) {
                             localStorage.setItem(`jkit_lastDashboardTab_${currentUser.username}`, panelId);
                         }
@@ -5961,26 +6336,76 @@
                 document.querySelector('.dashboard-content')?.addEventListener('click', async e => {
                     const acceptBtn = e.target.closest('.accept-request-btn');
                     const rejectBtn = e.target.closest('.reject-request-btn');
+                    const editEventBtn = e.target.closest('#events-panel .edit-btn');
+                    const deleteEventBtn = e.target.closest('#events-panel .delete-btn');
                     const editNewsBtn = e.target.closest('.news-actions .edit-btn');
                     const deleteNewsBtn = e.target.closest('.news-actions .delete-btn');
                     const acceptJobBtn = e.target.closest('.accept-job-btn');
                     const declineJobBtn = e.target.closest('.decline-job-btn');
                     const deleteUserBtn = e.target.closest('.delete-user-btn');
                     const resetPassBtn = e.target.closest('.reset-password-btn');
-                    const rateJobBtn = e.target.closest('.rate-job-btn'); // <-- NEW
 
                     const acceptApplicantBtn = e.target.closest('.accept-applicant-btn');
                     const rejectApplicantBtn = e.target.closest('.reject-applicant-btn');
                     const adminJobDeleteBtn = e.target.closest('.admin-job-delete-btn'); 
+                    const userEventEditBtn = e.target.closest('.user-event-edit-btn');
+                    const userEventDeleteBtn = e.target.closest('.user-event-delete-btn');
                     const editTimelineEventBtn = e.target.closest('.edit-timeline-event-btn');
                     const deleteTimelineEventBtn = e.target.closest('.delete-timeline-event-btn');
+                    const editOriginalEventBtn = e.target.closest('.edit-original-event-btn');
+                    const deleteOriginalEventBtn = e.target.closest('.delete-original-event-btn');
                     
+                    const editProductBtn = e.target.closest('.user-product-edit-btn'); // <-- NEW
+                    const deleteProductBtn = e.target.closest('.user-product-delete-btn'); // <-- NEW
+                    const markAvailableBtn = e.target.closest('.mark-available-btn'); // <-- NEW
+                    const markSoldBtn = e.target.closest('.mark-sold-btn'); // <-- NEW
+
+
+                    // NEW: Product actions
+                    if (editProductBtn) {
+                        openProductModal(editProductBtn.dataset.productId);
+                    }
+                    if (deleteProductBtn) {
+                        deleteContent('products', deleteProductBtn.dataset.productId, 'Are you sure you want to delete this product?');
+                    }
+                    if (markAvailableBtn) {
+                        await saveData('products', markAvailableBtn.dataset.productId, { status: 'available' });
+                    }
+                    if (markSoldBtn) {
+                        await saveData('products', markSoldBtn.dataset.productId, { status: 'sold' });
+                    }
+
+                    if (userEventEditBtn) {
+                        openEventModal(userEventEditBtn.dataset.eventId);
+                    }
+                    if (userEventDeleteBtn) {
+                        const eventId = userEventDeleteBtn.dataset.eventId;
+                        if (confirm('Are you sure you want to delete this event?')) {
+                            try {
+                                const response = await fetch(`/api/events/${eventId}`, { method: 'DELETE', credentials: 'include' });
+                                if (!response.ok) { const err = await response.json(); throw new Error(err.message); }
+                                showToast('Event deleted successfully.', 'success');
+                                setTimeout(() => window.location.reload(), 1500);
+                            } catch (error) {
+                                showToast(`Error deleting event: ${error.message}`, 'error');
+                            }
+                        }
+                    }
+
                     if (editTimelineEventBtn) { 
                         openTimelineEventModal(editTimelineEventBtn.dataset.eventId);
                     }
                     if (deleteTimelineEventBtn) {
                         const eventId = deleteTimelineEventBtn.dataset.eventId;
                         deleteData(true, `timeline-events/${eventId}`, 'Are you sure you want to delete this timeline event?');
+                    }
+                    
+                    if (editOriginalEventBtn) {
+                        openOriginalEventModal(editOriginalEventBtn.dataset.eventId);
+                    }
+                    if (deleteOriginalEventBtn) {
+                        const eventId = deleteOriginalEventBtn.dataset.eventId;
+                        deleteData(true, `original-events/${eventId}`, 'Are you sure you want to delete this original event?');
                     }
 
                     if (adminJobDeleteBtn) { 
@@ -6030,6 +6455,12 @@
                             }
                         }
                     }
+                    
+                    if (editEventBtn) { openEventModal(editEventBtn.dataset.eventId); }
+                    if (deleteEventBtn) {
+                        const eventId = deleteEventBtn.dataset.eventId;
+                        deleteData(true, `events/${eventId}`, 'Are you sure you want to delete this event?');
+                    }
 
                     if (acceptJobBtn) {
                         const jobId = acceptJobBtn.dataset.jobId;
@@ -6045,9 +6476,6 @@
                     if (deleteNewsBtn) {
                         const articleId = deleteNewsBtn.dataset.articleId;
                         deleteData(true, `news/${articleId}`, 'Are you sure you want to delete this news article?');
-                    }
-                    if (rateJobBtn) { // <-- NEW
-                        openRatingModal(rateJobBtn.dataset.jobId, rateJobBtn.dataset.workerUsername);
                     }
                 });
 
@@ -6115,6 +6543,145 @@
                         document.getElementById('job-image-preview').src = URL.createObjectURL(file);
                         const newPath = await handleFileUpload(file);
                         if (newPath) document.getElementById('job-image-path-hidden').value = newPath;
+                    }
+                });
+                
+                // Product Multiple Images Upload
+                // Product image upload setup - called only when modal opens
+                window.setupProductImageUploadForModal = function() {
+                    const previewContainer = document.getElementById('product-images-preview');
+                    const addImageBtn = document.getElementById('add-product-image-btn');
+                    const imagesHidden = document.getElementById('product-images-hidden');
+                    
+                    if (!previewContainer || !addImageBtn) return;
+                    
+                    const updateImagesHidden = () => {
+                        const images = [];
+                        previewContainer.querySelectorAll('.image-slot:not(.empty)').forEach(slot => {
+                            const img = slot.querySelector('.image-preview');
+                            if (img && img.dataset.path) {
+                                images.push(img.dataset.path);
+                            }
+                        });
+                        imagesHidden.value = JSON.stringify(images);
+                    };
+                    
+                    const createImageSlot = (slotIndex) => {
+                        const slot = document.createElement('div');
+                        slot.className = 'image-slot empty';
+                        slot.dataset.slot = slotIndex;
+                        slot.innerHTML = `
+                            <img src="/jkitlogo.png" alt="Product image ${slotIndex + 1}" class="image-preview">
+                            <label for="product-image-input-${slotIndex}" class="image-upload-label">Upload Image ${slotIndex + 1}</label>
+                            <input type="file" id="product-image-input-${slotIndex}" accept="image/*" data-slot="${slotIndex}">
+                            <button type="button" class="remove-image-btn" style="display: none;">×</button>
+                        `;
+                        return slot;
+                    };
+                    
+                    const setupSlotHandlers = (slot) => {
+                        const input = slot.querySelector('input[type="file"]');
+                        const img = slot.querySelector('.image-preview');
+                        const removeBtn = slot.querySelector('.remove-image-btn');
+                        
+                        input.addEventListener('change', async (e) => {
+                            const file = e.target.files[0];
+                            if (file) {
+                                // Validation
+                                if (!['image/jpeg', 'image/png', 'image/jpg'].includes(file.type)) {
+                                    showToast('Only JPG and PNG images are allowed.', 'error');
+                                    return;
+                                }
+                                if (file.size > 5 * 1024 * 1024) {
+                                    showToast('File size exceeds 5MB limit.', 'error');
+                                    return;
+                                }
+                                
+                                img.src = URL.createObjectURL(file);
+                                img.dataset.path = '';
+                                slot.classList.remove('empty');
+                                removeBtn.style.display = 'block';
+                                input.disabled = true;
+                                
+                                try {
+                                    const newPath = await handleFileUpload(file);
+                                    if (newPath) {
+                                        img.dataset.path = newPath;
+                                        updateImagesHidden();
+                                        showToast('Image uploaded successfully.', 'success');
+                                    } else {
+                                        throw new Error('Upload failed - no path returned');
+                                    }
+                                } catch (error) {
+                                    showToast(`Upload failed: ${error.message}`, 'error');
+                                    img.dataset.path = '';
+                                    img.src = '/jkitlogo.png';
+                                    slot.classList.add('empty');
+                                    removeBtn.style.display = 'none';
+                                    input.value = '';
+                                } finally {
+                                    input.disabled = false;
+                                }
+                            }
+                        });
+                        
+                        removeBtn.addEventListener('click', () => {
+                            img.src = '/jkitlogo.png';
+                            img.dataset.path = '';
+                            input.value = '';
+                            slot.classList.add('empty');
+                            removeBtn.style.display = 'none';
+                            updateImagesHidden();
+                            
+                            if (previewContainer.querySelectorAll('.image-slot').length < 5) {
+                                addImageBtn.style.display = 'inline-block';
+                            }
+                        });
+                    };
+                    
+                    // Setup all slots
+                    previewContainer.querySelectorAll('.image-slot').forEach(slot => {
+                        setupSlotHandlers(slot);
+                    });
+                    
+                    // Add image button handler
+                    const addImageSlot = () => {
+                        const slots = previewContainer.querySelectorAll('.image-slot');
+                        if (slots.length >= 5) {
+                            showToast('Maximum 5 images allowed.', 'warning');
+                            return;
+                        }
+                        
+                        const newSlot = createImageSlot(slots.length);
+                        previewContainer.appendChild(newSlot);
+                        setupSlotHandlers(newSlot);
+                        
+                        if (previewContainer.querySelectorAll('.image-slot').length >= 5) {
+                            addImageBtn.style.display = 'none';
+                        }
+                    };
+                    
+                    addImageBtn.addEventListener('click', (e) => {
+                        e.preventDefault();
+                        addImageSlot();
+                    });
+                };
+
+                document.getElementById('event-image-input')?.addEventListener('change', async e => {
+                    const file = e.target.files[0];
+                    if (file) {
+                        document.getElementById('event-image-preview').src = URL.createObjectURL(file);
+                        const newPath = await handleFileUpload(file);
+                        if (newPath) document.getElementById('event-image-path-hidden').value = newPath;
+                    }
+                });
+
+                document.getElementById('original-event-image-input')?.addEventListener('change', async (e) => {
+                    const file = e.target.files[0];
+                    if (file) {
+                        document.getElementById('original-event-image-preview').src = URL.createObjectURL(file);
+                        const newPath = await handleFileUpload(file);
+                        if (newPath) document.getElementById('original-event-image-path-hidden').value = newPath;
                     }
                 });
 
@@ -6226,8 +6793,7 @@
                             tiktok: document.getElementById('profile-tiktok').value,
                             whatsapp: document.getElementById('profile-whatsapp').value,
                             galleryImagePaths: galleryPaths, 
-                            cvPath: document.getElementById('profile-cv-path-hidden').value,
-                            location: document.getElementById('profile-location').value // --- NEW: Save location ---
+                            cvPath: document.getElementById('profile-cv-path-hidden').value 
                         };
                         await saveData('profiles', currentUser.username, updatedProfile);
                     } finally {
@@ -6281,8 +6847,12 @@
                 });
 
                 document.getElementById('dashboard-post-job-btn')?.addEventListener('click', () => openJobModal());
+                document.getElementById('dashboard-post-product-btn')?.addEventListener('click', () => openProductModal()); // <-- NEW
+                document.getElementById('dashboard-create-event-btn')?.addEventListener('click', () => openEventModal());
+                document.getElementById('dashboard-create-my-event-btn')?.addEventListener('click', () => openEventModal()); 
                 document.getElementById('dashboard-create-news-btn')?.addEventListener('click', () => openNewsModal());
                 document.getElementById('dashboard-create-timeline-event-btn')?.addEventListener('click', () => openTimelineEventModal());
+                document.getElementById('dashboard-create-original-event-btn')?.addEventListener('click', () => openOriginalEventModal());
                 document.querySelectorAll('.job-actions .edit-btn').forEach(btn => btn.addEventListener('click', () => openJobModal(btn.dataset.jobId)));
                 document.querySelectorAll('.job-actions .delete-btn').forEach(btn => btn.addEventListener('click', () => deleteContent('jobs', btn.dataset.jobId, 'Are you sure you want to delete this job?')));
                 document.querySelectorAll('.job-actions .close-btn').forEach(btn => btn.addEventListener('click', () => {
@@ -6721,6 +7291,77 @@
                 showModal(jobModal);
             }
             
+            // --- NEW: Open Product Modal ---
+            function openProductModal(productId = null) {
+                const form = document.getElementById('product-form');
+                form.reset();
+                
+                document.getElementById('product-modal-title').textContent = productId ? 'Edit Product' : 'Add a New Product';
+                document.getElementById('product-id').value = productId || '';
+                
+                const previewContainer = document.getElementById('product-images-preview');
+                const imagesHidden = document.getElementById('product-images-hidden');
+                
+                // Helper to create slot HTML
+                const createSlotHTML = (index, imagePath = null) => `
+                    <div class="image-slot ${!imagePath ? 'empty' : ''}" data-slot="${index}">
+                        <img src="${imagePath || '/jkitlogo.png'}" alt="Product image ${index + 1}" class="image-preview" data-path="${imagePath || ''}">
+                        <label for="product-image-input-${index}" class="image-upload-label">Upload Image ${index + 1}</label>
+                        <input type="file" id="product-image-input-${index}" accept="image/*" data-slot="${index}">
+                        <button type="button" class="remove-image-btn" ${imagePath ? '' : 'style="display: none;"'}>×</button>
+                    </div>
+                `;
+                
+                // Reset to empty state
+                previewContainer.innerHTML = createSlotHTML(0);
+                imagesHidden.value = '[]';
+                document.getElementById('add-product-image-btn').style.display = 'inline-block';
+                
+                // Load existing product if editing
+                if (productId) {
+                    const product = allProducts.find(p => p.productId === productId);
+                    if (product) {
+                        document.getElementById('product-name').value = product.name;
+                        document.getElementById('product-description').value = product.description || '';
+                        document.getElementById('product-category').value = product.category || '';
+                        document.getElementById('product-price').value = product.price;
+                        
+                        // Load product images
+                        if (product.images && product.images.length > 0) {
+                            previewContainer.innerHTML = '';
+                            
+                            // Add existing images
+                            product.images.forEach((imagePath, index) => {
+                                previewContainer.innerHTML += createSlotHTML(index, imagePath);
+                            });
+                            
+                            // Add empty slots
+                            for (let i = product.images.length; i < 5; i++) {
+                                previewContainer.innerHTML += createSlotHTML(i);
+                            }
+                            
+                            imagesHidden.value = JSON.stringify(product.images);
+                            
+                            // Hide add button if 5 images
+                            if (product.images.length >= 5) {
+                                document.getElementById('add-product-image-btn').style.display = 'none';
+                            }
+                        } else if (product.imagePath) {
+                            // Backward compatibility: convert old single imagePath to array
+                            imagesHidden.value = JSON.stringify([product.imagePath]);
+                            previewContainer.innerHTML = '';
+                            previewContainer.innerHTML += createSlotHTML(0, product.imagePath);
+                            previewContainer.innerHTML += createSlotHTML(1);
+                        }
+                    }
+                }
+                
+                // Setup all image handlers
+                window.setupProductImageUploadForModal();
+                
+                showModal(productModal);
+            }
+
             function openNewsModal(articleId = null) {
                 const form = document.getElementById('news-form');
                 if (form) form.reset();
@@ -6741,29 +7382,6 @@
                 }
 
                 showModal(newsModal);
-            }
-            
-            function openJobCategoryModal(categoryName = null) {
-                const form = document.getElementById('job-category-form');
-                if (form) form.reset();
-
-                document.getElementById('job-category-modal-title').textContent = categoryName ? 'Edit Job Category' : 'Create New Job Category';
-                document.getElementById('job-category-original-name').value = categoryName || '';
-                document.getElementById('job-category-name').value = categoryName || '';
-
-                showModal(jobCategoryModal);
-            }
-
-            function openSpecificJobModal(categoryName, jobName = null) {
-                const form = document.getElementById('specific-job-form');
-                if (form) form.reset();
-
-                document.getElementById('specific-job-modal-title').textContent = jobName ? 'Edit Job Type' : 'Add New Job Type';
-                document.getElementById('specific-job-category-name').value = categoryName || '';
-                document.getElementById('specific-job-original-name').value = jobName || '';
-                document.getElementById('specific-job-name').value = jobName || '';
-
-                showModal(specificJobModal);
             }
             
             function openJobModalForDirectHire(username, serviceName) {
@@ -6788,29 +7406,6 @@
                 document.getElementById('job-payRate').value = 'once-off';
                 document.getElementById('job-payRate').disabled = true;
             }
-            
-            // --- NEW HIRE FUNCTION ---
-            function openJobModalForGenericHire(username) {
-                openJobModal(); // Resets and opens the modal
-                const profileToHire = allProfiles.find(p => p.username === username);
-                if (!profileToHire) return;
-
-                document.getElementById('job-modal-title').textContent = `Hire ${profileToHire.fullName}`;
-                document.getElementById('job-assignedTo').value = username;
-
-                // Leave title blank for user to fill
-                document.getElementById('job-title').value = ''; 
-                document.getElementById('job-title').disabled = false;
-                document.getElementById('job-title').placeholder = 'e.g., General Cleaning, Event Assistance...';
-
-                // Set a generic description
-                document.getElementById('job-description').value = `This is a direct hire for ${profileToHire.fullName}. Please specify the job title and details below.`;
-                
-                // Default max people to 1 and disable
-                document.getElementById('job-maxPeople').value = 1;
-                document.getElementById('job-maxPeople').disabled = true;
-            }
-
 
             document.getElementById('job-form').addEventListener('submit', async e => {
                 e.preventDefault();
@@ -6862,6 +7457,182 @@
                 }
             });
 
+            // --- NEW: Product Form Submit ---
+            document.getElementById('product-form')?.addEventListener('submit', async e => {
+                e.preventDefault();
+                const submitBtn = e.target.querySelector('button[type="submit"]');
+                submitBtn.disabled = true;
+                submitBtn.textContent = 'Saving...';
+                
+                try {
+                    const productId = document.getElementById('product-id').value;
+                    
+                    // Validation
+                    const name = document.getElementById('product-name').value.trim();
+                    const description = document.getElementById('product-description').value.trim();
+                    const category = document.getElementById('product-category').value.trim();
+                    const priceStr = document.getElementById('product-price').value.trim();
+                    const imagesStr = document.getElementById('product-images-hidden').value;
+                    
+                    if (!name) {
+                        showToast('Product name is required.', 'error');
+                        document.getElementById('product-name').focus();
+                        return;
+                    }
+                    if (!description) {
+                        showToast('Product description is required.', 'error');
+                        document.getElementById('product-description').focus();
+                        return;
+                    }
+                    if (!category) {
+                        showToast('Product category is required.', 'error');
+                        document.getElementById('product-category').focus();
+                        return;
+                    }
+                    if (!priceStr) {
+                        showToast('Product price is required.', 'error');
+                        document.getElementById('product-price').focus();
+                        return;
+                    }
+                    
+                    const price = parseFloat(priceStr);
+                    if (isNaN(price) || price <= 0) {
+                        showToast('Product price must be a valid positive number.', 'error');
+                        document.getElementById('product-price').focus();
+                        return;
+                    }
+                    
+                    let images = [];
+                    try {
+                        images = JSON.parse(imagesStr);
+                        if (!Array.isArray(images)) {
+                            throw new Error('Invalid images format');
+                        }
+                    } catch (parseErr) {
+                        showToast('Error parsing images. Please re-upload your images.', 'error');
+                        console.error('Image parse error:', parseErr);
+                        return;
+                    }
+                    
+                    if (images.length === 0) {
+                        showToast('Please upload at least one product image.', 'error');
+                        return;
+                    }
+                    
+                    const productData = {
+                        name: name,
+                        description: description,
+                        category: category,
+                        price: price,
+                        images: images,
+                    };
+
+                    if (productId) {
+                        const originalProduct = allProducts.find(p => p.productId === productId);
+                        if (originalProduct) {
+                            productData.status = originalProduct.status;
+                        }
+                        await saveData('products', productId, productData);
+                        showToast('Product updated successfully!', 'success');
+                    } else {
+                        await createData('products', productData);
+                        showToast('Product created successfully!', 'success');
+                    }
+                    
+                    // Close modal on success
+                    closeModal();
+                    
+                    // Refresh products page if viewing it
+                    if (document.getElementById('products-page').classList.contains('active-page')) {
+                        renderProductsPage();
+                    }
+                } catch (error) {
+                    console.error('Product save error:', error);
+                    showToast(`Error saving product: ${error.message}`, 'error');
+                } finally {
+                    submitBtn.disabled = false;
+                    submitBtn.textContent = 'Save Product';
+                }
+            });
+
+            document.getElementById('event-form').addEventListener('submit', async e => {
+                e.preventDefault();
+                const submitBtn = e.target.querySelector('button[type="submit"]');
+                submitBtn.disabled = true;
+                submitBtn.textContent = 'Saving...';
+
+                try {
+                    const eventId = document.getElementById('event-id').value;
+                    const eventData = {
+                        eventId: eventId || `event_${Date.now()}`,
+                        title: document.getElementById('event-title').value,
+                        description: document.getElementById('event-description').value,
+                        date: document.getElementById('event-date').value,
+                        location: document.getElementById('event-location').value,
+                        link: document.getElementById('event-link').value,
+                        imagePath: document.getElementById('event-image-path-hidden').value
+                    };
+                    
+                    const postOrPut = async (url, method, body) => {
+                        const response = await fetch(url, {
+                            method,
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify(body),
+                            credentials: 'include'
+                        });
+                        if (!response.ok) { const err = await response.json(); throw new Error(err.message); }
+                        return response.json();
+                    };
+
+                    if (eventId) {
+                        const event = allImportantEvents.find(e => e.eventId === eventId);
+                        const isAdminAction = currentUser.isAdmin && event && event.postedBy !== currentUser.username;
+                        const url = isAdminAction ? `/api/admin/events/${eventId}` : `/api/events/${eventId}`;
+                        await postOrPut(url, 'PUT', eventData);
+                    } else {
+                        const url = currentUser.isAdmin ? `/api/admin/events` : `/api/events`;
+                        await postOrPut(url, 'POST', eventData);
+                    }
+                    showToast('Event saved successfully!', 'success');
+                    setTimeout(() => window.location.reload(), 1500);
+
+                } catch (error) {
+                    showToast(`Error saving event: ${error.message}`, 'error');
+                }
+                finally {
+                    submitBtn.disabled = false;
+                    submitBtn.textContent = 'Save Event';
+                }
+            });
+            
+            document.getElementById('original-event-form')?.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const submitBtn = e.target.querySelector('button[type="submit"]');
+                submitBtn.disabled = true;
+                submitBtn.textContent = 'Saving...';
+
+                try {
+                    const eventId = document.getElementById('original-event-id').value;
+                    const eventData = {
+                        title: document.getElementById('original-event-title').value,
+                        description: document.getElementById('original-event-description').value,
+                        date: document.getElementById('original-event-date').value,
+                        imagePath: document.getElementById('original-event-image-path-hidden').value
+                    };
+
+                    if (eventId) {
+                        await saveData('original-events', eventId, eventData, true);
+                    } else {
+                        eventData.originalEventId = `orig_event_${Date.now()}`;
+                        await createData('original-events', eventData, true);
+                    }
+                } finally {
+                    submitBtn.disabled = false;
+                    submitBtn.textContent = 'Save Original Event';
+                }
+            });
+
+
             document.getElementById('timeline-event-form')?.addEventListener('submit', async (e) => {
                 e.preventDefault();
                 const submitBtn = e.target.querySelector('button[type="submit"]');
@@ -6912,49 +7683,6 @@
                 } finally {
                     submitBtn.disabled = false;
                     submitBtn.textContent = 'Save Article';
-                }
-            });
-
-            // --- NEW: RATING FORM SUBMISSION ---
-            document.getElementById('rating-form')?.addEventListener('submit', async (e) => {
-                e.preventDefault();
-                const submitBtn = e.target.querySelector('button[type="submit"]');
-                const selectedStar = document.querySelector('#rating-modal .stars-input i.selected');
-                
-                if (!selectedStar) {
-                    showToast('Please select a star rating.', 'error');
-                    return;
-                }
-
-                submitBtn.disabled = true;
-                submitBtn.textContent = 'Submitting...';
-
-                const ratingData = {
-                    jobId: document.getElementById('rating-job-id').value,
-                    ratedUsername: document.getElementById('rating-worker-username').value,
-                    rating: parseInt(selectedStar.dataset.value, 10),
-                    comment: document.getElementById('rating-comment').value
-                };
-
-                try {
-                    const response = await fetch('/api/ratings', {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify(ratingData),
-                        credentials: 'include'
-                    });
-                    const result = await response.json();
-                    if (!response.ok) {
-                        throw new Error(result.message);
-                    }
-                    showToast(result.message, 'success');
-                    closeModal();
-                    // No full reload needed, rely on socket.io for profile update
-                } catch (error) {
-                    showToast(`Error: ${error.message}`, 'error');
-                } finally {
-                    submitBtn.disabled = false;
-                    submitBtn.textContent = 'Submit Rating';
                 }
             });
 
@@ -7181,6 +7909,31 @@
                 showModal(applyModal); 
             }
             
+            function openEventViewMoreModal(eventId, isOriginal = false) {
+                const eventCollection = isOriginal ? allOriginalEvents : allImportantEvents;
+                const eventIdKey = isOriginal ? 'originalEventId' : 'eventId';
+                const event = eventCollection.find(e => e[eventIdKey] === eventId);
+                if (!event) return;
+
+                const modal = document.getElementById('event-view-more-modal');
+                document.getElementById('event-modal-image-view').src = event.imagePath || GLOBAL_FALLBACK_IMAGE;
+                document.getElementById('event-modal-title-view').textContent = event.title;
+                document.getElementById('event-modal-date-view').textContent = new Date(event.date).toLocaleDateString('en-GB', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+                document.getElementById('event-modal-location-view').textContent = event.location || 'N/A';
+                document.getElementById('event-modal-description-view').textContent = event.description;
+                
+                const linkContainer = document.getElementById('event-modal-link-container-view');
+                if (event.link) {
+                    linkContainer.innerHTML = `<a href="${event.link}" target="_blank" class="jkit-btn">Learn More</a>`;
+                    linkContainer.style.display = 'block';
+                } else {
+                    linkContainer.innerHTML = '';
+                    linkContainer.style.display = 'none';
+                }
+
+                showModal(modal);
+            }
+
             function bindActionButtons() {
                 document.body.addEventListener('click', async e => {
                     const interactionButton = e.target.closest('.interaction-item button');
@@ -7202,8 +7955,12 @@
                     const enlargeableImage = e.target.closest('.enlargeable-image');
                     const peoplePageImageContainer = e.target.closest('#people-page .card-image-container.view-profile-btn');
                     const employersPageImageContainer = e.target.closest('#employers-page .card-image-container.view-profile-btn'); // Added for employers
+                    const viewMoreEventBtn = e.target.closest('.view-more-event-btn');
                     const applyModalActionBtn = e.target.closest('#apply-modal-actions .action-btn');
-                    const hireBtn = e.target.closest('.hire-btn');
+                    const viewProductBtn = e.target.closest('.view-product-btn');
+                    const viewMoreBtn = e.target.closest('.view-more-btn');
+                    const backToProductsBtn = e.target.closest('#back-to-products-btn');
+                    const galleryThumbnail = e.target.closest('.product-gallery-thumbnail');
 
                     if (interactionButton) { e.preventDefault(); e.stopPropagation(); handleRatingAction(interactionButton); } 
                     else if (applyModalActionBtn) { e.preventDefault(); handleApplyModalAction(applyModalActionBtn); }
@@ -7221,8 +7978,47 @@
                         e.preventDefault();
                         openProfileDetailPage(employersPageImageContainer.dataset.username);
                     }
+                    else if (viewProductBtn) {
+                        e.preventDefault();
+                        const productId = viewProductBtn.dataset.productid;
+                        const imagesData = viewProductBtn.dataset.images;
+                        
+                        if (imagesData && imagesData !== '[]') {
+                            // Show carousel for multiple images
+                            const images = JSON.parse(imagesData);
+                            if (images.length > 1) {
+                                openProductCarousel(images);
+                                return;
+                            }
+                        }
+                        
+                        // Single image or no images - go to detail page
+                        window.showPage('product-detail-page', { stateParams: { id: productId } });
+                    }
+                    else if (viewMoreBtn) {
+                        e.preventDefault();
+                        const productId = viewMoreBtn.dataset.productid;
+                        window.showPage('product-detail-page', { stateParams: { id: productId } });
+                    }
+                    else if (galleryThumbnail) {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        // Update main product image when thumbnail is clicked
+                        const imagePath = galleryThumbnail.dataset.imagePath;
+                        const mainImageEl = document.getElementById('product-detail-image');
+                        if (mainImageEl && imagePath) {
+                            displayImage(mainImageEl, imagePath, FALLBACK_PRODUCT_IMG);
+                        }
+                        
+                        // Update thumbnail borders - remove from all, add to clicked
+                        const allThumbnails = document.querySelectorAll('.product-gallery-thumbnail');
+                        allThumbnails.forEach(thumb => {
+                            thumb.classList.remove('active');
+                        });
+                        galleryThumbnail.classList.add('active');
+                    }
                     else if (viewProfileBtn) { e.preventDefault(); openProfileDetailPage(viewProfileBtn.dataset.username); } 
-                    else if (enlargeableImage) {
+                    else if (enlargeableImage && !enlargeableImage.closest('.view-product-btn')) {
                         e.preventDefault();
                         openImageViewer(enlargeableImage.src);
                     }
@@ -7233,6 +8029,15 @@
                     else if (viewCvBtn) {
                         e.preventDefault();
                         openCvModal(viewCvBtn.dataset.cvPath);
+                    }
+                    else if (viewMoreEventBtn) { 
+                        e.preventDefault();
+                        const isOriginal = viewMoreEventBtn.dataset.isOriginal === 'true';
+                        openEventViewMoreModal(viewMoreEventBtn.dataset.eventId, isOriginal);
+                    }
+                    else if (backToProductsBtn) {
+                        e.preventDefault();
+                        window.showPage('products-page', {});
                     }
                     else if (backBtn) {
                         e.preventDefault();
@@ -7272,26 +8077,13 @@
                         const { username, skill, service } = btn.dataset;
                         openJobModalForDirectHire(username, skill || service);
                     }
-                     else if (hireBtn) {
-                        e.preventDefault();
-                        if (!currentUser) {
-                            showToast('Please log in to hire someone.', 'info');
-                            showModal(loginModal);
-                            return;
-                        }
-                        openJobModalForGenericHire(hireBtn.dataset.username);
-                    }
                     else if(readMoreBtn) {
                         e.preventDefault();
                         const article = allNewsArticles.find(a => a.articleId === readMoreBtn.dataset.articleId);
-                        console.log('Read More clicked. Article:', article);
                         if(article) {
                             document.getElementById('read-more-title').textContent = article.title;
                             document.getElementById('read-more-content').textContent = article.content;
-                            const imgElement = document.getElementById('read-more-image');
-                            console.log('Setting image. imagePath:', article.imagePath, 'GLOBAL_FALLBACK_IMAGE:', GLOBAL_FALLBACK_IMAGE);
-                            displayImage(imgElement, article.imagePath, GLOBAL_FALLBACK_IMAGE);
-                            console.log('Image element after displayImage:', imgElement.src);
+                            displayImage(document.getElementById('read-more-image'), article.imagePath, GLOBAL_FALLBACK_IMAGE);
                             showModal(readMoreModal);
                         }
                     }
@@ -7340,6 +8132,12 @@
                     e.preventDefault();
                     openJobModal();
                 });
+                
+                document.getElementById('post-new-product-from-products-page-btn')?.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    openProductModal();
+                });
+
                 const ticketForm = document.getElementById('ticketForm');
                 if (ticketForm) {
                     ticketForm.addEventListener('submit', async (e) => {
@@ -7681,6 +8479,19 @@
                     searchEmployersInput.addEventListener('input', updateEmployerFilters);
                     employerTypeFilter.addEventListener('change', updateEmployerFilters);
                 }
+                
+                // --- NEW PRODUCTS FILTER LOGIC ---
+                const searchProductsInput = document.getElementById('search-products-input');
+                const productCategoryFilter = document.getElementById('product-category-filter');
+
+                const updateProductFilters = () => {
+                    renderProductsPage(searchProductsInput.value, productCategoryFilter.value);
+                };
+
+                if (searchProductsInput && productCategoryFilter) {
+                    searchProductsInput.addEventListener('input', updateProductFilters);
+                    productCategoryFilter.addEventListener('change', updateProductFilters);
+                }
             }
             
             function initCarousels() { const wrappers = document.querySelectorAll('.carousel-wrapper'); const scrollAmount = 320; wrappers.forEach(wrapper => { const carousel = wrapper.querySelector('.card-carousel'); const btnLeft = wrapper.querySelector('.scroll-left'); const btnRight = wrapper.querySelector('.scroll-right'); if (!carousel || !btnLeft || !btnRight) return; function updateButtonState() { const isAtStart = carousel.scrollLeft <= 0; const isAtEnd = carousel.scrollWidth - carousel.clientWidth - carousel.scrollLeft < 1; btnLeft.classList.toggle('hidden', isAtStart); btnRight.classList.toggle('hidden', isAtEnd); } btnLeft.addEventListener('click', () => { carousel.scrollBy({ left: -scrollAmount, behavior: 'smooth' }); }); btnRight.addEventListener('click', () => { carousel.scrollBy({ left: scrollAmount, behavior: 'smooth' }); }); carousel.addEventListener('scroll', () => { window.requestAnimationFrame(updateButtonState); }); new ResizeObserver(updateButtonState).observe(carousel); updateButtonState(); }); }
@@ -7820,9 +8631,12 @@
                     if (type === 'profiles') key = 'username';
                     else if (type === 'agencies') key = 'agencyId';
                     else if (type === 'agencyRequests') key = 'requestId';
+                    else if (type === 'importantEvents') key = 'eventId';
+                    else if (type === 'originalEvents') key = 'originalEventId';
                     else if (type === 'newsArticles') key = 'articleId';
                     else if (type === 'jobCategories') key = '_id';
                     else if (type === 'timelineEvents') key = 'timelineEventId';
+                    else if (type === 'products') key = 'productId';
 
                     const index = collection.findIndex(item => item[key] === data[key]);
                     if (index > -1) {
@@ -7836,9 +8650,12 @@
                 socket.on('content_deleted', ({ type, id }) => {
                     let collection = window[`all${type.charAt(0).toUpperCase() + type.slice(1)}`];
                     let key = 'jobId';
-                    if (type === 'newsArticles') key = 'articleId';
+                    if (type === 'importantEvents') key = 'eventId';
+                    else if (type === 'originalEvents') key = 'originalEventId';
+                    else if (type === 'newsArticles') key = 'articleId';
                     else if (type === 'jobCategories') key = '_id';
                     else if (type === 'timelineEvents') key = 'timelineEventId';
+                    else if (type === 'products') key = 'productId';
 
                     window[`all${type.charAt(0).toUpperCase() + type.slice(1)}`] = collection.filter(item => item[key] !== id);
                     rerenderCurrentPage();
@@ -7939,15 +8756,6 @@
                 chatPopup.style.display = 'flex';
                 document.documentElement.classList.add('chat-open-mobile');
                 document.body.classList.add('chat-open-mobile');
-
-                // Push a history state on mobile so the back button can close the chat
-                try {
-                    if (window.innerWidth <= 768 && !(history.state && history.state.modal === 'chat')) {
-                        history.pushState({ modal: 'chat' }, '', location.href);
-                    }
-                } catch (e) {
-                    console.warn('History pushState failed:', e);
-                }
                 
                 chatContactsList.style.display = 'flex';
                 chatPopup.classList.remove('contacts-open');
@@ -7985,17 +8793,6 @@
                 
                 document.querySelector('#chat-conversation-area').style.display = 'flex';
                 document.querySelector('#no-active-chat-placeholder').style.display = 'none';
-            }
-
-            function closeChat() {
-                const chatPopup = document.getElementById('chat-popup');
-                if (!chatPopup) return;
-                chatPopup.style.display = 'none';
-                document.documentElement.classList.remove('chat-open-mobile');
-                document.body.classList.remove('chat-open-mobile');
-                const chatContactsList = document.getElementById('chat-contacts-list');
-                if (chatContactsList) chatContactsList.style.display = '';
-                activeChatRecipient = null;
             }
             
             function handleSendMessage(e) {
@@ -8150,12 +8947,10 @@
                 });
 
                 document.getElementById('chat-close-btn').addEventListener('click', () => {
-                    // If this chat was opened via a pushed history state, go back to close it
-                    if (history.state && history.state.modal === 'chat') {
-                        history.back();
-                    } else {
-                        closeChat();
-                    }
+                    chatPopup.style.display = 'none';
+                    document.documentElement.classList.remove('chat-open-mobile');
+                    document.body.classList.remove('chat-open-mobile');
+                    activeChatRecipient = null;
                 });
                 
                 document.getElementById('chat-contacts-ai-btn').addEventListener('click', (e) => {
@@ -8514,6 +9309,73 @@
             //  9. APP INITIALIZATION & REAL-TIME RE-RENDERING
             // =========================================================================
             
+            function rerenderCurrentPage() {
+                const activePage = document.querySelector('.page-content.active-page');
+                if (!activePage) return;
+
+                if (activePage.id === 'home-page') renderHomePage();
+                if (activePage.id === 'about-page') renderAboutPage();
+                if (activePage.id === 'jobs-page') renderJobsPage(document.getElementById('search-jobs-input').value, document.getElementById('job-type-filter').value, document.getElementById('category-jobs-filter').value, '');
+                if (activePage.id === 'people-page') {
+                    const activeFilterBtn = document.querySelector('#people-type-filter-buttons .people-cat-btn.active');
+                    const filterType = activeFilterBtn ? activeFilterBtn.dataset.filter : 'all';
+                    renderPeoplePage(document.getElementById('search-people-input').value, filterType, document.getElementById('worker-category-filter-input').value, document.getElementById('talent-category-filter-input').value, '');
+                }
+                
+                // NEW: Products Page
+                if (activePage.id === 'products-page') {
+                    renderProductsPage(
+                        document.getElementById('search-products-input').value,
+                        document.getElementById('product-category-filter').value
+                    );
+                }
+
+                // NEW: Employers Page
+                if (activePage.id === 'employers-page') {
+                    renderEmployersPage(
+                        document.getElementById('search-employers-input').value,
+                        document.getElementById('employer-type-filter').value
+                    );
+                }
+
+                if (activePage.id === 'zone-page') renderAgenciesPage(document.getElementById('search-agencies-input').value, document.getElementById('type-agencies-filter').value);
+                
+                if (activePage.id === 'agency-detail-page' && currentDetailView.type === 'agency') {
+                    renderAgencyDetailPage(currentDetailView.id, true);
+                }
+                if (activePage.id === 'profile-detail-page' && currentDetailView.type === 'profile') {
+                    openProfileDetailPage(currentDetailView.id, true);
+                }
+
+                if (activePage.id === 'dashboard-page') renderDashboardPage();
+                
+                renderStatsSection();
+            }
+            
+            function renderAboutPage() {
+                document.getElementById('about-page-tagline').innerHTML = aboutContent.tagline;
+                document.getElementById('about-our-story-title').innerHTML = aboutContent.ourStory.title;
+                document.getElementById('about-our-story-paragraphs').innerHTML = aboutContent.ourStory.paragraphs.map(p => `<p>${p}</p>`).join('');
+                document.getElementById('about-our-story-images').innerHTML = aboutContent.ourStory.images.map(img => `<div class="about-grid-image" style="background-image: url('${img}');"></div>`).join('');
+                document.getElementById('about-vision-title').innerHTML = aboutContent.vision.title;
+                document.getElementById('about-vision-content').innerHTML = aboutContent.vision.content;
+                document.getElementById('about-mission-title').innerHTML = aboutContent.mission.title;
+                document.getElementById('about-mission-items').innerHTML = aboutContent.mission.items.map(item => `<li>${item}</li>`).join('');
+                document.getElementById('about-values-title').innerHTML = aboutContent.values.title;
+                document.getElementById('about-values-cards').innerHTML = aboutContent.values.cards.map(card => `<div class="value-card"><i class="${card.icon}"></i><h4>${card.title}</h4><p>${card.description}</p></div>`).join('');
+                document.getElementById('about-how-it-works-title').innerHTML = aboutContent.howItWorks.title;
+                document.getElementById('about-how-it-works-items').innerHTML = aboutContent.howItWorks.items.map(item => `<div class="feature-item"><i class="${item.icon}"></i><h3>${item.title}</h3><p>${item.description}</p></div>`).join('');
+                document.getElementById('about-problem-title').innerHTML = aboutContent.problemSolution.problem.title;
+                document.getElementById('about-problem-items').innerHTML = aboutContent.problemSolution.problem.items.map(item => `<li>${item}</li>`).join('');
+                document.getElementById('about-solution-title').innerHTML = aboutContent.problemSolution.solution.title;
+                document.getElementById('about-solution-items').innerHTML = aboutContent.problemSolution.solution.items.map(item => `<li>${item}</li>`).join('');
+                document.getElementById('about-who-we-serve-title').innerHTML = aboutContent.whoWeServe.title;
+                document.getElementById('about-who-we-serve-audiences').innerHTML = aboutContent.whoWeServe.audiences.map(aud => `<div class="audience-card"><i class="${aud.icon}"></i><h4>${aud.title}</h4><ul>${aud.items.map(item => `<li>${item}</li>`).join('')}</ul></div>`).join('');
+                document.getElementById('about-cta-title').innerHTML = aboutContent.cta.title;
+                document.getElementById('about-cta-paragraph').innerHTML = aboutContent.cta.paragraph;
+                document.getElementById('about-cta-button').innerHTML = aboutContent.cta.buttonText;
+            }
+
             function renderAboutContentAdminPanel() {
                 const panel = document.getElementById('about-content-panel');
                 if (!panel) return;
@@ -8620,56 +9482,6 @@
                     </form>
                 `;
             }
-
-            function renderAboutPage() {
-                // This function updates the live about page from the aboutContent object
-                if (document.getElementById('about-page').classList.contains('active-page')) {
-                    document.getElementById('about-page-tagline').textContent = aboutContent.tagline;
-                    document.getElementById('about-our-story-title').textContent = aboutContent.ourStory.title;
-                    const storyParaContainer = document.getElementById('about-our-story-paragraphs');
-                    storyParaContainer.innerHTML = aboutContent.ourStory.paragraphs.map(p => `<p>${p}</p>`).join('');
-                    const storyImageContainer = document.getElementById('about-our-story-images');
-                    storyImageContainer.innerHTML = aboutContent.ourStory.images.map(img => `<div class="about-grid-image" style="background-image: url('${img}');"></div>`).join('');
-                    
-                    document.getElementById('about-vision-title').textContent = aboutContent.vision.title;
-                    document.getElementById('about-vision-content').textContent = aboutContent.vision.content;
-                    
-                    document.getElementById('about-mission-title').textContent = aboutContent.mission.title;
-                    const missionItemsContainer = document.getElementById('about-mission-items');
-                    missionItemsContainer.innerHTML = aboutContent.mission.items.map(item => `<li>${item}</li>`).join('');
-                    
-                    document.getElementById('about-values-title').textContent = aboutContent.values.title;
-                    const valuesCardsContainer = document.getElementById('about-values-cards');
-                    valuesCardsContainer.innerHTML = aboutContent.values.cards.map(card => `<div class="value-card"><i class="${card.icon}"></i><h4>${card.title}</h4><p>${card.description}</p></div>`).join('');
-
-                    document.getElementById('about-how-it-works-title').textContent = aboutContent.howItWorks.title;
-                    const howItWorksContainer = document.getElementById('about-how-it-works-items');
-                    howItWorksContainer.innerHTML = aboutContent.howItWorks.items.map(item => `<div class="feature-item"><i class="${item.icon}"></i><h3>${item.title}</h3><p>${item.description}</p></div>`).join('');
-
-                    document.getElementById('about-problem-title').textContent = aboutContent.problemSolution.problem.title;
-                    const problemItemsContainer = document.getElementById('about-problem-items');
-                    problemItemsContainer.innerHTML = aboutContent.problemSolution.problem.items.map(item => `<li>${item}</li>`).join('');
-
-                    document.getElementById('about-solution-title').textContent = aboutContent.problemSolution.solution.title;
-                    const solutionItemsContainer = document.getElementById('about-solution-items');
-                    solutionItemsContainer.innerHTML = aboutContent.problemSolution.solution.items.map(item => `<li>${item}</li>`).join('');
-
-                    document.getElementById('about-who-we-serve-title').textContent = aboutContent.whoWeServe.title;
-                    const audiencesContainer = document.getElementById('about-who-we-serve-audiences');
-                    audiencesContainer.innerHTML = aboutContent.whoWeServe.audiences.map(aud => `
-                        <div class="audience-card">
-                            <i class="${aud.icon}"></i>
-                            <h4>${aud.title}</h4>
-                            <ul>
-                                ${aud.items.map(item => `<li>${item}</li>`).join('')}
-                            </ul>
-                        </div>`).join('');
-
-                    document.getElementById('about-cta-title').textContent = aboutContent.cta.title;
-                    document.getElementById('about-cta-paragraph').textContent = aboutContent.cta.paragraph;
-                    document.getElementById('about-cta-button').textContent = aboutContent.cta.buttonText;
-                }
-            }
             
             function setupGlobalEventListeners() {
                 const notifBtn = document.getElementById('nav-notification-btn');
@@ -8737,103 +9549,29 @@
                 }
                 showModal(timelineEventModal);
             }
-
-            function openRatingModal(jobId, workerUsername) {
-                const job = allJobs.find(j => j.jobId === jobId);
-                const worker = allProfiles.find(p => p.username === workerUsername);
-
-                if (!job || !worker) {
-                    showToast('Error: Job or worker not found.', 'error');
-                    return;
-                }
-
-                document.getElementById('rating-job-id').value = jobId;
-                document.getElementById('rating-worker-username').value = workerUsername;
-                document.getElementById('rating-modal-worker-name').textContent = worker.fullName;
-                document.getElementById('rating-modal-job-title').textContent = job.title;
-
-                // Reset stars
-                const stars = document.querySelectorAll('#rating-modal .stars-input i');
-                stars.forEach(star => {
-                    star.classList.remove('fas', 'selected');
-                    star.classList.add('far');
-                });
-                document.getElementById('rating-comment').value = '';
-
-                showModal(ratingModal);
-            }
-
-            function rerenderCurrentPage() {
-                const activePage = document.querySelector('.page-content.active-page');
-                if (!activePage) return;
-
-                // Always update stats and notifications regardless of page
-                renderStatsSection();
-                if (currentUser) {
-                    renderNotifications();
-                    renderChatNotifications();
-                    updateUnreadNotificationBadge();
-                    updateUnreadBadge('message');
-                    updateUnreadBadge('request');
-                }
-
-                // Re-render the content of the currently active page
-                switch (activePage.id) {
-                    case 'home-page':
-                        renderHomePage();
-                        break;
-                    case 'jobs-page':
-                        renderJobsPage(
-                            document.getElementById('search-jobs-input').value,
-                            document.getElementById('job-type-filter').value,
-                            document.getElementById('category-jobs-filter').value,
-                            '' // Specific job filter is not stored globally, it's a one-off action
-                        );
-                        break;
-                    case 'people-page':
-                        renderPeoplePage(
-                            document.getElementById('search-people-input').value,
-                            document.querySelector('#people-type-filter-buttons .active')?.dataset.filter || 'all',
-                            document.getElementById('worker-category-filter-input').value,
-                            document.getElementById('talent-category-filter-input').value,
-                             '' // Specific skill filter is not stored globally
-                        );
-                        break;
-                    case 'employers-page':
-                         renderEmployersPage(
-                            document.getElementById('search-employers-input').value,
-                            document.getElementById('employer-type-filter').value
-                        );
-                        break;
-                    case 'zone-page':
-                        renderAgenciesPage(
-                            document.getElementById('search-agencies-input').value,
-                            document.getElementById('type-agencies-filter').value
-                        );
-                        break;
-                    case 'dashboard-page':
-                        if (currentUser) {
-                            renderDashboardPage();
-                        }
-                        break;
-                    case 'agency-detail-page':
-                        if (currentDetailView.type === 'agency' && currentDetailView.id) {
-                            renderAgencyDetailPage(currentDetailView.id, true);
-                        }
-                        break;
-                    case 'profile-detail-page':
-                        if (currentDetailView.type === 'profile' && currentDetailView.id) {
-                            openProfileDetailPage(currentDetailView.id, true);
-                        }
-                        break;
-                    case 'about-page':
-                        // The about page content is handled by a separate socket event
-                        // but we can call its render function just in case
-                        renderAboutPage();
-                        break;
-                }
-            }
             
+            function openOriginalEventModal(eventId = null) {
+                const form = document.getElementById('original-event-form');
+                form.reset();
+                
+                document.getElementById('original-event-modal-title').textContent = eventId ? 'Edit Original Event' : 'Create New Original Event';
+                document.getElementById('original-event-id').value = eventId || '';
+                document.getElementById('original-event-image-preview').src = GLOBAL_FALLBACK_IMAGE;
+                document.getElementById('original-event-image-path-hidden').value = '';
+
+                if (eventId) {
+                    const event = allOriginalEvents.find(e => e.originalEventId === eventId);
+                    if (event) {
+                        document.getElementById('original-event-title').value = event.title;
+                        document.getElementById('original-event-description').value = event.description;
+                        document.getElementById('original-event-date').value = new Date(event.date).toISOString().split('T')[0];
+                        document.getElementById('original-event-image-path-hidden').value = event.imagePath;
+                        document.getElementById('original-event-image-preview').src = event.imagePath || GLOBAL_FALLBACK_IMAGE;
+                    }
+                }
+                showModal(originalEventModal);
+            }
+
             function initializeApp() {
                 updateNavUI();
                 setupGlobalEventListeners();
@@ -8841,6 +9579,7 @@
                 renderHomePage();
                 renderJobsPage();
                 renderPeoplePage();
+                renderProductsPage(); // <-- NEW
                 renderEmployersPage(); // Ensure employers render on startup
                 renderAgenciesPage();
                 renderDashboardPage();
@@ -8870,50 +9609,6 @@
                 setupPasswordToggles();
                 setupChatUI();
                 initCarousels();
-
-                // --- NEW: RATING MODAL STAR LOGIC ---
-                const starsInputContainer = document.querySelector('#rating-modal .stars-input');
-                if (starsInputContainer) {
-                    starsInputContainer.addEventListener('mouseover', e => {
-                        if (e.target.tagName === 'I') {
-                            const hoverValue = e.target.dataset.value;
-                            const stars = starsInputContainer.querySelectorAll('i');
-                            stars.forEach(star => {
-                                if (star.dataset.value <= hoverValue) {
-                                    star.classList.add('fas');
-                                    star.classList.remove('far');
-                                } else {
-                                    star.classList.add('far');
-                                    star.classList.remove('fas');
-                                }
-                            });
-                        }
-                    });
-
-                    starsInputContainer.addEventListener('mouseout', () => {
-                        const selectedStar = starsInputContainer.querySelector('i.selected');
-                        const selectedValue = selectedStar ? selectedStar.dataset.value : 0;
-                        const stars = starsInputContainer.querySelectorAll('i');
-                        stars.forEach(star => {
-                             if (star.dataset.value <= selectedValue) {
-                                star.classList.add('fas');
-                                star.classList.remove('far');
-                            } else {
-                                star.classList.add('far');
-                                star.classList.remove('fas');
-                            }
-                        });
-                    });
-
-                    starsInputContainer.addEventListener('click', e => {
-                         if (e.target.tagName === 'I') {
-                             const value = e.target.dataset.value;
-                             const stars = starsInputContainer.querySelectorAll('i');
-                             stars.forEach(star => star.classList.remove('selected'));
-                             e.target.classList.add('selected');
-                         }
-                    });
-                }
                 
                 const hash = window.location.hash.substring(1);
                 let startPage = 'home-page';

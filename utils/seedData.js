@@ -84,13 +84,13 @@ const users = {
 };
 
 const profiles = {
-    'masterjkit': { username: 'MasterJkit', fullName: 'J-KIT Admin', bio: 'Platform Administrator.', skills: ['Management', 'Support'], avatarPath: 'https://i.ibb.co/tZ0b6c6/admin-avatar.png', email: 'admin@jkit.com', phone: '0810000000', location: 'Windhoek, Namibia' },
-    'helman': { username: 'helman', fullName: 'Helman', bio: 'Experienced yard cleaner...', skills: ['Yard Cleaning', 'General Labour'], avatarPath: 'https://i.ibb.co/dMvLz52/person1.jpg', email: 'helman@example.com', phone: '0810000001', location: 'Katutura, Windhoek' },
-    'frans': { username: 'frans', fullName: 'Frans Nande Malima', bio: 'Founder of Frans Man Agency...', skills: ['Recruitment', 'Management'], avatarPath: 'https://i.ibb.co/N1PqG7j/agent1.jpg', phone: '081-123-4567', email: 'frans.malima@agency.com', linkedin: 'https://linkedin.com/in/frans-malima', facebook: 'https://facebook.com/frans.agency', location: 'Windhoek West, Windhoek' },
-    'melrile': { username: 'melrile', fullName: 'Melrile Guest House', bio: 'A premier guest house...', skills: ['Hospitality', 'Hiring'], avatarPath: 'https://i.ibb.co/3s6kDBx/employer1.jpg', email: 'melrile@example.com', phone: '0810000003', location: 'Swakopmund, Namibia' },
-    'ndiina': { username: 'ndiina', fullName: 'Ndiina Malima', bio: 'Reliable and trustworthy cleaner...', skills: ['House cleaner', 'Laundry & ironing'], avatarPath: 'https://i.ibb.co/xXGj25v/person2.jpg', email: 'ndiina@example.com', phone: '0810000004', location: 'Khomasdal, Windhoek' },
-    'angel': { username: 'angel', fullName: 'Angel Kulo', bio: 'One-day job specialist...', skills: ['Deep Cleaning', 'Move-out Cleaning'], avatarPath: 'https://i.ibb.co/yQjJz9B/person3.jpg', email: 'angel@example.com', phone: '0810000005', location: 'Eros, Windhoek' },
-    'given': { username: 'given', fullName: 'Given Herman', bio: 'Versatile worker available...', skills: ['Yard cleaning', 'Car washing', 'DJs'], avatarPath: 'https://i.ibb.co/VvZ6fLg/person4.jpg', phone: '081-3414450', email: 'given@example.com', services: { 'Yard Cleaning': 300, 'Car Wash': 50, 'Stove Cleaning': 500 }, location: 'Okuryangava, Windhoek' }
+    'masterjkit': { username: 'MasterJkit', fullName: 'J-KIT Admin', bio: 'Platform Administrator.', skills: ['Management', 'Support'], avatarPath: 'https://i.ibb.co/tZ0b6c6/admin-avatar.png', email: 'admin@jkit.com', phone: '0810000000' },
+    'helman': { username: 'helman', fullName: 'Helman', bio: 'Experienced yard cleaner...', skills: ['Yard Cleaning', 'General Labour'], avatarPath: 'https://i.ibb.co/dMvLz52/person1.jpg', email: 'helman@example.com', phone: '0810000001' },
+    'frans': { username: 'frans', fullName: 'Frans Nande Malima', bio: 'Founder of Frans Man Agency...', skills: ['Recruitment', 'Management'], avatarPath: 'https://i.ibb.co/N1PqG7j/agent1.jpg', phone: '081-123-4567', email: 'frans.malima@agency.com', linkedin: 'https://linkedin.com/in/frans-malima', facebook: 'https://facebook.com/frans.agency' },
+    'melrile': { username: 'melrile', fullName: 'Melrile Guest House', bio: 'A premier guest house...', skills: ['Hospitality', 'Hiring'], avatarPath: 'https://i.ibb.co/3s6kDBx/employer1.jpg', email: 'melrile@example.com', phone: '0810000003' },
+    'ndiina': { username: 'ndiina', fullName: 'Ndiina Malima', bio: 'Reliable and trustworthy cleaner...', skills: ['House cleaner', 'Laundry & ironing'], avatarPath: 'https://i.ibb.co/xXGj25v/person2.jpg', email: 'ndiina@example.com', phone: '0810000004' },
+    'angel': { username: 'angel', fullName: 'Angel Kulo', bio: 'One-day job specialist...', skills: ['Deep Cleaning', 'Move-out Cleaning'], avatarPath: 'https://i.ibb.co/yQjJz9B/person3.jpg', email: 'angel@example.com', phone: '0810000005' },
+    'given': { username: 'given', fullName: 'Given Herman', bio: 'Versatile worker available...', skills: ['Yard cleaning', 'Car washing', 'DJs'], avatarPath: 'https://i.ibb.co/VvZ6fLg/person4.jpg', phone: '081-3414450', email: 'given@example.com', services: { 'Yard Cleaning': 300, 'Car Wash': 50, 'Stove Cleaning': 500 } }
 };
 
 const jobs = {
