@@ -2724,24 +2724,6 @@
                 </div>
             </div>
 
-            <section class="timeline-section" id="original-timeline-section">
-                <div class="container">
-                    <h2>J-KIT Timeline</h2>
-                    <div class="timeline-container" id="timeline-container">
-                        <!-- Timeline events will be rendered here by JS -->
-                    </div>
-                </div>
-            </section>
-
-            <section class="events-section" id="original-events-section">
-                <div class="container">
-                    <h2>Events</h2>
-                    <div class="events-grid" id="original-events-grid">
-                        <!-- Original Events will be rendered here by JS -->
-                    </div>
-                </div>
-            </section>
-
             <!-- News Section -->
             <section class="news-section">
                 <div class="container">
@@ -3647,6 +3629,24 @@
                 } else {
                     closeModal(); 
                 }
+            }
+
+            // Job Category & Specific Job modal helpers
+            function openJobCategoryModal(originalName) {
+                if (!jobCategoryModal) return;
+                document.getElementById('job-category-original-name').value = originalName || '';
+                document.getElementById('job-category-name').value = originalName || '';
+                document.getElementById('job-category-modal-title').textContent = originalName ? 'Edit Job Category' : 'Create New Job Category';
+                showModal(jobCategoryModal);
+            }
+
+            function openSpecificJobModal(categoryName, jobName) {
+                if (!specificJobModal) return;
+                document.getElementById('specific-job-category-name').value = categoryName || '';
+                document.getElementById('specific-job-original-name').value = jobName || '';
+                document.getElementById('specific-job-name').value = jobName || '';
+                document.getElementById('specific-job-modal-title').textContent = jobName ? `Edit Job Type — ${jobName}` : (categoryName ? `Add New Job Type to ${categoryName}` : 'Add New Job Type');
+                showModal(specificJobModal);
             }
 
             document.getElementById('login-btn').addEventListener('click', (e) => { e.preventDefault(); showModal(loginModal); }); 
@@ -5581,8 +5581,7 @@
                 if (currentUser && currentUser.isAdmin) {
                     navHTML += `<li><button data-panel="admin-jobs-panel"><i class="fas fa-hammer"></i> Job Management</button></li>`; 
                     navHTML += `<li><button data-panel="about-content-panel"><i class="fas fa-info-circle"></i> Manage About Page</button></li>`; 
-                    navHTML += `<li><button data-panel="events-panel"><i class="fas fa-calendar-alt"></i> Manage Events</button></li>`;
-                    navHTML += `<li><button data-panel="original-events-panel"><i class="fas fa-star"></i> Manage Original Events</button></li>`;
+                    // Admin events panels removed per request
                     navHTML += `<li><button data-panel="news-panel"><i class="fas fa-newspaper"></i> Manage News</button></li>`;
                     navHTML += `<li><button data-panel="job-categories-panel"><i class="fas fa-sitemap"></i> Manage Job Categories</button></li>`;
                     navHTML += `<li><button data-panel="default-images-panel"><i class="fas fa-image"></i> Default Images</button></li>`;
@@ -5707,22 +5706,7 @@
                             <button class="edit-btn" data-event-id="${event.eventId}" title="Edit Event"><i class="fas fa-edit"></i></button>
                             <button class="delete-btn" data-event-id="${event.eventId}" title="Delete Event"><i class="fas fa-trash"></i></button>
                         </div></li>`).join('') : '<li><p>No events have been created yet.</p></li>';
-                    panelsHTML += `<div id="events-panel" class="dashboard-panel"><h3>Manage Important Events</h3><button class="jkit-btn" id="dashboard-create-event-btn">+ Create New Event</button><ul class="my-events-list">${eventsListHTML}</ul></div>`;
-                    
-                    let originalEventsListHTML = allOriginalEvents.length > 0 ? allOriginalEvents.map(event => `
-                        <li class="my-events-list">
-                            <img src="${event.imagePath}" alt="${event.title}" class="event-list-image">
-                            <span class="event-list-title">${event.title}</span>
-                            <div class="event-actions">
-                                <button class="edit-btn edit-original-event-btn" data-event-id="${event.originalEventId}" title="Edit Original Event"><i class="fas fa-edit"></i></button>
-                                <button class="delete-btn delete-original-event-btn" data-event-id="${event.originalEventId}" title="Delete Original Event"><i class="fas fa-trash"></i></button>
-                            </div>
-                        </li>`).join('') : '<li><p>No original events have been created yet.</p></li>';
-                    panelsHTML += `<div id="original-events-panel" class="dashboard-panel">
-                        <h3>Manage Original Events</h3>
-                        <button class="jkit-btn" id="dashboard-create-original-event-btn">+ Create New Original Event</button>
-                        <ul class="my-events-list">${originalEventsListHTML}</ul>
-                    </div>`;
+                    // Admin original-events panel removed per request
 
                     let newsListHTML = allNewsArticles.length > 0 ? allNewsArticles.map(article => `
                         <li class="my-news-list">
@@ -6336,8 +6320,6 @@
                 document.querySelector('.dashboard-content')?.addEventListener('click', async e => {
                     const acceptBtn = e.target.closest('.accept-request-btn');
                     const rejectBtn = e.target.closest('.reject-request-btn');
-                    const editEventBtn = e.target.closest('#events-panel .edit-btn');
-                    const deleteEventBtn = e.target.closest('#events-panel .delete-btn');
                     const editNewsBtn = e.target.closest('.news-actions .edit-btn');
                     const deleteNewsBtn = e.target.closest('.news-actions .delete-btn');
                     const acceptJobBtn = e.target.closest('.accept-job-btn');
@@ -6352,8 +6334,7 @@
                     const userEventDeleteBtn = e.target.closest('.user-event-delete-btn');
                     const editTimelineEventBtn = e.target.closest('.edit-timeline-event-btn');
                     const deleteTimelineEventBtn = e.target.closest('.delete-timeline-event-btn');
-                    const editOriginalEventBtn = e.target.closest('.edit-original-event-btn');
-                    const deleteOriginalEventBtn = e.target.closest('.delete-original-event-btn');
+                    // Admin events controls removed
                     
                     const editProductBtn = e.target.closest('.user-product-edit-btn'); // <-- NEW
                     const deleteProductBtn = e.target.closest('.user-product-delete-btn'); // <-- NEW
@@ -6400,13 +6381,6 @@
                         deleteData(true, `timeline-events/${eventId}`, 'Are you sure you want to delete this timeline event?');
                     }
                     
-                    if (editOriginalEventBtn) {
-                        openOriginalEventModal(editOriginalEventBtn.dataset.eventId);
-                    }
-                    if (deleteOriginalEventBtn) {
-                        const eventId = deleteOriginalEventBtn.dataset.eventId;
-                        deleteData(true, `original-events/${eventId}`, 'Are you sure you want to delete this original event?');
-                    }
 
                     if (adminJobDeleteBtn) { 
                         deleteContent('jobs', adminJobDeleteBtn.dataset.jobId, 'Are you sure you want to permanently delete this job from the platform?');
@@ -6456,11 +6430,7 @@
                         }
                     }
                     
-                    if (editEventBtn) { openEventModal(editEventBtn.dataset.eventId); }
-                    if (deleteEventBtn) {
-                        const eventId = deleteEventBtn.dataset.eventId;
-                        deleteData(true, `events/${eventId}`, 'Are you sure you want to delete this event?');
-                    }
+                    // Admin event edit/delete handlers removed
 
                     if (acceptJobBtn) {
                         const jobId = acceptJobBtn.dataset.jobId;
@@ -6848,11 +6818,10 @@
 
                 document.getElementById('dashboard-post-job-btn')?.addEventListener('click', () => openJobModal());
                 document.getElementById('dashboard-post-product-btn')?.addEventListener('click', () => openProductModal()); // <-- NEW
-                document.getElementById('dashboard-create-event-btn')?.addEventListener('click', () => openEventModal());
                 document.getElementById('dashboard-create-my-event-btn')?.addEventListener('click', () => openEventModal()); 
                 document.getElementById('dashboard-create-news-btn')?.addEventListener('click', () => openNewsModal());
                 document.getElementById('dashboard-create-timeline-event-btn')?.addEventListener('click', () => openTimelineEventModal());
-                document.getElementById('dashboard-create-original-event-btn')?.addEventListener('click', () => openOriginalEventModal());
+                // Admin create-original-event removed
                 document.querySelectorAll('.job-actions .edit-btn').forEach(btn => btn.addEventListener('click', () => openJobModal(btn.dataset.jobId)));
                 document.querySelectorAll('.job-actions .delete-btn').forEach(btn => btn.addEventListener('click', () => deleteContent('jobs', btn.dataset.jobId, 'Are you sure you want to delete this job?')));
                 document.querySelectorAll('.job-actions .close-btn').forEach(btn => btn.addEventListener('click', () => {
