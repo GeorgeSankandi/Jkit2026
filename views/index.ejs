@@ -2999,6 +2999,29 @@
             <div class="container"><h2>Recruitment & Management Agencies</h2><div class="grid-container" id="agencies-grid"></div></div>
         </section>
         
+        <!-- GLOBAL SEARCH PAGE -->
+        <section id="global-search-page" class="page-content">
+            <div class="page-header">
+                <div class="container">
+                    <h1>Search Results</h1>
+                    <div class="airbnb-filters-container">
+                        <div class="filter-item flex-grow">
+                            <label for="global-search-input">Search the platform</label>
+                            <input type="text" id="global-search-input" placeholder="Search everything: people, jobs, products, agencies, news..." style="pointer-events: auto;">
+                        </div>
+                        <button class="filter-search-btn" id="global-search-btn" aria-label="Search">
+                            <i class="fas fa-search"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="container">
+                <div id="global-search-results">
+                    <!-- Aggregated search results will appear here -->
+                </div>
+            </div>
+        </section>
+        
         <!-- DASHBOARD PAGE -->
         <section id="dashboard-page" class="page-content"><div class="container"><div id="dashboard-container"></div></div></section>
 
@@ -8318,62 +8341,111 @@
 
                 const homeSearchInput = document.getElementById('search-home-input');
                 const homeSearchBtn = document.getElementById('home-search-btn');
-                
+
+                // Render aggregated search results across the platform
+                const renderGlobalSearchPage = (query) => {
+                    const q = (query || '').trim().toLowerCase();
+                    if (!q) return;
+                    const peopleResults = allProfiles.filter(profile => (
+                        (profile.fullName || '').toLowerCase().includes(q) ||
+                        (profile.username || '').toLowerCase().includes(q) ||
+                        ((profile.skills || []).join(' ') || '').toLowerCase().includes(q)
+                    ));
+                    const jobResults = allJobs.filter(job => (
+                        (job.title || '').toLowerCase().includes(q) ||
+                        (job.description || '').toLowerCase().includes(q) ||
+                        (job.location || '').toLowerCase().includes(q)
+                    ));
+                    const agencyResults = allAgencies.filter(a => ((a.name || '').toLowerCase().includes(q) || (a.description || '').toLowerCase().includes(q)));
+                    const productResults = (allProducts || []).filter(p => ((p.title || p.name || '').toLowerCase().includes(q) || (p.description || '').toLowerCase().includes(q)));
+                    const newsResults = (allNewsArticles || []).filter(n => (((n.title || '') + ' ' + (n.content || '')).toLowerCase().includes(q)));
+
+                    const container = document.getElementById('global-search-results');
+                    if (!container) return;
+                    const makeList = (items, title, renderItem) => {
+                        if (!items || items.length === 0) return '';
+                        const listHtml = items.slice(0, 8).map(item => `<div class=\"search-result-item\">${renderItem(item)}</div>`).join('');
+                        return `<div class=\"search-section\"><h3>${title} (${items.length})</h3><div class=\"search-list\">${listHtml}</div></div>`;
+                    };
+
+                    let html = '';
+                    html += makeList(peopleResults, 'People', p => `<strong>${p.fullName || p.username}</strong> <span class=\"muted\">@${p.username}</span> <div class=\"small\">${(p.skills || []).slice(0,4).join(', ')}</div><button class=\"jkit-btn jkit-btn-sm open-profile-btn\" data-username=\"${p.username}\">View</button>`);
+                    html += makeList(jobResults, 'Jobs', j => `<strong>${j.title}</strong> <div class=\"small\">${(j.description||'').substring(0,80)}...</div><button class=\"jkit-btn jkit-btn-sm open-jobs-btn\" data-query=\"${query}\">Open Jobs</button>`);
+                    html += makeList(agencyResults, 'Agencies', a => `<strong>${a.name}</strong> <div class=\"small\">${(a.description||'').substring(0,80)}...</div><button class=\"jkit-btn jkit-btn-sm open-agency-btn\" data-query=\"${query}\">Open Agencies</button>`);
+                    html += makeList(productResults, 'Products', p => `<strong>${p.title || p.name}</strong> <div class=\"small\">${(p.description||'').substring(0,80)}...</div><button class=\"jkit-btn jkit-btn-sm open-products-btn\" data-query=\"${query}\">Open Products</button>`);
+                    html += makeList(newsResults, 'News', n => `<strong>${n.title}</strong> <div class=\"small\">${(n.excerpt || n.content || '').substring(0,120)}...</div>`);
+
+                    if (!html) html = '<p>No results found across the platform.</p>';
+                    container.innerHTML = html;
+
+                    // Attach simple click handlers for the generated buttons
+                    container.querySelectorAll('.open-profile-btn').forEach(btn => {
+                        btn.addEventListener('click', (e) => {
+                            const u = e.currentTarget.dataset.username;
+                            if (u) openProfileDetailPage(u);
+                        });
+                    });
+                    container.querySelectorAll('.open-jobs-btn').forEach(btn => {
+                        btn.addEventListener('click', () => {
+                            window.showPage('jobs-page', {});
+                            setTimeout(() => {
+                                document.getElementById('search-jobs-input').value = query;
+                                currentJobFilters.text = query;
+                                updateAllJobFilters();
+                            }, 50);
+                        });
+                    });
+                    container.querySelectorAll('.open-agency-btn').forEach(btn => {
+                        btn.addEventListener('click', () => {
+                            window.showPage('zone-page', {});
+                            setTimeout(() => {
+                                document.getElementById('search-agencies-input').value = query;
+                                renderAgenciesPage(query, document.getElementById('type-agencies-filter').value);
+                            }, 50);
+                        });
+                    });
+                    container.querySelectorAll('.open-products-btn').forEach(btn => {
+                        btn.addEventListener('click', () => {
+                            window.showPage('products-page', {});
+                            setTimeout(() => {
+                                document.getElementById('search-products-input').value = query;
+                                renderProductsPage(query, document.getElementById('product-category-filter').value);
+                            }, 50);
+                        });
+                    });
+                };
+
                 const executeHomeSearch = () => {
-                    const query = homeSearchInput.value.trim().toLowerCase();
+                    const query = homeSearchInput.value.trim();
                     if (!query) return;
 
-                    // Prioritize J-KIT ID search
-                    if (/^\d{8}$/.test(query) || query.startsWith('jk-na-')) {
-                        const searchId = query.startsWith('jk-na-') ? query : `jk-na-${query}`;
+                    // Prioritize J-KIT ID direct profile open
+                    const qLower = query.toLowerCase();
+                    if (/^\d{8}$/.test(qLower) || qLower.startsWith('jk-na-')) {
+                        const searchId = qLower.startsWith('jk-na-') ? qLower : `jk-na-${qLower}`;
                         const user = allUsers.find(u => u.jkitId && u.jkitId.toLowerCase() === searchId.toLowerCase());
-                        if (user) {
-                            openProfileDetailPage(user.username);
-                            return;
-                        }
+                        if (user) { openProfileDetailPage(user.username); return; }
                     }
 
-                    // Check for matches in other data sets
-                    const jobMatch = allJobs.some(job => job.title.toLowerCase().includes(query));
-                    const personMatch = allProfiles.some(profile => 
-                        profile.fullName.toLowerCase().includes(query) || 
-                        (profile.skills || []).some(skill => skill.toLowerCase().includes(query))
-                    );
-                    const agencyMatch = allAgencies.some(agency => agency.name.toLowerCase().includes(query));
-
-                    // Navigate based on match priority
-                    if (personMatch) {
-                        window.showPage('people-page', {});
-                        setTimeout(() => {
-                            document.getElementById('search-people-input').value = query;
-                            currentPeopleFilters.text = query;
-                            updateAllPeopleFilters();
-                        }, 50);
-                    } else if (jobMatch) {
-                        window.showPage('jobs-page', {});
-                        setTimeout(() => {
-                            document.getElementById('search-jobs-input').value = query;
-                            currentJobFilters.text = query;
-                            updateAllJobFilters();
-                        }, 50);
-                    } else if (agencyMatch) {
-                        window.showPage('zone-page', {});
-                        setTimeout(() => {
-                            document.getElementById('search-agencies-input').value = query;
-                            renderAgenciesPage(query, document.getElementById('type-agencies-filter').value);
-                        }, 50);
-                    } else {
-                        // Default to searching people if no specific match is found
-                        window.showPage('people-page', {});
-                            setTimeout(() => {
-                            document.getElementById('search-people-input').value = query;
-                            currentPeopleFilters.text = query;
-                            updateAllPeopleFilters();
-                        }, 50);
-                    }
+                    // Otherwise show aggregated global results (search everything)
+                    window.showPage('global-search-page', {});
+                    setTimeout(() => {
+                        const globalInput = document.getElementById('global-search-input');
+                        if (globalInput) globalInput.value = query;
+                        renderGlobalSearchPage(query);
+                    }, 50);
                 };
+
                 homeSearchBtn.addEventListener('click', executeHomeSearch);
                 homeSearchInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') { executeHomeSearch(); }});
+
+                // Wire the global search input/button to the same renderer
+                const globalSearchInput = document.getElementById('global-search-input');
+                const globalSearchBtn = document.getElementById('global-search-btn');
+                if (globalSearchBtn && globalSearchInput) {
+                    globalSearchBtn.addEventListener('click', () => renderGlobalSearchPage(globalSearchInput.value));
+                    globalSearchInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') renderGlobalSearchPage(globalSearchInput.value); });
+                }
 
                 const searchPeopleInput = document.getElementById('search-people-input');
                 let currentPeopleFilters = { text: '', type: 'all', workerCat: '', talentCat: '', specific: '' };
